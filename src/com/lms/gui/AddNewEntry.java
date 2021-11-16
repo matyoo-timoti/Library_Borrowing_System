@@ -3,6 +3,9 @@ package com.lms.gui;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 
 class AddNewEntry {
@@ -47,7 +50,7 @@ class AddNewEntry {
     private static final JTextField due_date_tf = new JTextField();
     private static final JPanel due_date_cont = new JPanel(new GridLayout(2, 1));
 
-    static FileHandling file_handling = new FileHandling();
+    private static final String path = System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Library Borrowing System";
 
     public static void main(String[] args) {
         WINDOW.setSize((int) (get_screen_width() / 2.7), (int) (get_screen_height() / 2.5));
@@ -127,8 +130,6 @@ class AddNewEntry {
         WINDOW.add(container_panel, BorderLayout.CENTER);
         WINDOW.setResizable(false);
 
-        //Button Action
-        popup_container.setVisible(false);
         SAVE_BUTTON.addActionListener(e -> {
             var bt = get_text(book_title_tf);
             var ad = get_text(author_date_tf);
@@ -141,18 +142,51 @@ class AddNewEntry {
             if (form_incomplete()) {
                 JOptionPane.showMessageDialog(WINDOW, "Fields can't be empty!", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                file_handling.save(bt, ad, is, bn, af, db, dd);
-                book_title_tf.setText("");
-                author_date_tf.setText("");
-                isbn_tf.setText("");
-                borrower_name_tf.setText("");
-                affiliation_tf.setText("");
-                date_borrowed_tf.setText("");
-                due_date_tf.setText("");
+                save(bt, ad, is, bn, af, db, dd);
+                JOptionPane.showMessageDialog(WINDOW, "Entry Saved", "Notification", JOptionPane.PLAIN_MESSAGE);
+                WINDOW.dispose();
             }
-            popup_container.setVisible(true);
         });
-        delay(1500);
+    }
+
+    private static void popup() {
+        popup_container.setVisible(!popup_container.isVisible());
+    }
+
+    public static void save(String book_title, String author_date, String ISBN, String borrower_name, String
+            affiliation, String date_borrowed, String due_date) {
+        StringBuilder id = new StringBuilder();
+        id.append(book_title).append("_").append(borrower_name).append("_").append(date_borrowed).append("_").append(due_date);
+        File folder = new File(path);
+        if (folder.exists() || folder.mkdirs()) {
+            File new_file = new File(path + File.separator + id + ".txt");
+            try {
+                if (new_file.createNewFile()) {
+                    System.out.println("File created: " + new_file.getName());
+                    try {
+                        FileWriter file_writer = new FileWriter(path + File.separator + id + ".txt");
+                        file_writer.write(book_title + "\n");
+                        file_writer.write(author_date + "\n");
+                        file_writer.write(ISBN + "\n");
+                        file_writer.write(borrower_name + "\n");
+                        file_writer.write(affiliation + "\n");
+                        file_writer.write(date_borrowed + "\n");
+                        file_writer.write(due_date);
+                        file_writer.close();
+                    } catch (IOException e) {
+                        JOptionPane.showMessageDialog(WINDOW, "An Error Occurred");
+                        e.printStackTrace();
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(WINDOW, "There are similar entry in the system.", "Error", JOptionPane.ERROR_MESSAGE);
+                    System.out.println("File Already Exists!");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Not created");
+        }
     }
 
     private static boolean form_incomplete() {

@@ -31,7 +31,7 @@ public class FileHandling {
                         e.printStackTrace();
                     }
                 } else {
-//                    JOptionPane.showMessageDialog(x, "There are similar entry in the system.", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "There are similar entry in the system.", "Error", JOptionPane.ERROR_MESSAGE);
                     System.out.println("File Already Exists!");
                 }
             } catch (IOException e) {
