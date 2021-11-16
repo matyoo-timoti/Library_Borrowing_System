@@ -1,10 +1,9 @@
 package com.lms.gui;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+
 
 class AddNewEntry {
     private static final JFrame WINDOW = new JFrame("Library Borrowing System | Add New Entry");
@@ -190,7 +189,6 @@ class AddNewEntry {
         WINDOW.setResizable(false);
 
         //<--------------------Button Action-------------------->
-        while (true) {
             SAVE_BUTTON.addActionListener(e -> {
                 String bt = book_title_tf.getText().trim();
                 String ad = author_date_tf.getText().trim();
@@ -199,49 +197,24 @@ class AddNewEntry {
                 String af = affiliation_tf.getText().trim();
                 String db = date_borrowed_tf.getText().trim();
                 String dd = due_date_tf.getText().trim();
-                Save(bt, ad, is, bn, af, db, dd);
-                book_title_tf.setText("");
-                author_date_tf.setText("");
-                isbn_tf.setText("");
-                borrower_name_tf.setText("");
-                affiliation_tf.setText("");
-                date_borrowed_tf.setText("");
-                due_date_tf.setText("");
-                popup_container.setVisible(true);
+                FileHandling.Save(bt, ad, is, bn, af, db, dd);
+//                book_title_tf.setText(null);
+//                author_date_tf.setText(null);
+//                isbn_tf.setText(null);
+//                borrower_name_tf.setText(null);
+//                affiliation_tf.setText(null);
+//                date_borrowed_tf.setText(null);
+//                due_date_tf.setText(null);
+//                popup_container.setVisible(true);
+//                delay();
+//                popup_container.setVisible(false);
+                WINDOW.dispose();
             });
-            delay();
-            popup_container.setVisible(false);
-        }
     }
 
-    public static void Save(String bt, String ad, long is, String bn, String af, String db, String dd) {
-        StringBuilder id = new StringBuilder();
-        id.append(bt, 0, 2);
-        id.append(bn, 0, 2);
-        id.append("_").append(db).append("_").append(dd);
-        var new_file = new File(id + ".txt");
-        try {
-            if (new_file.createNewFile()) {
-                System.out.println("File created: " + new_file.getName());
-            } else {
-                System.out.println("File already exists.");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            FileWriter myFileWriter = new FileWriter(id + ".txt");
-            myFileWriter.write(bt + "\n");
-            myFileWriter.write(ad + "\n");
-            myFileWriter.write(is + "\n");
-            myFileWriter.write(bn + "\n");
-            myFileWriter.write(af + "\n");
-            myFileWriter.write(db + "\n");
-            myFileWriter.write(dd + "\n");
-            myFileWriter.close();
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(WINDOW, "Error Occurred: " + e);
-            e.printStackTrace();
+    private static void is_empty(JTextField tf) {
+        if (tf.getText().isEmpty()) {
+            tf.setBorder(new LineBorder(Color.red, 1));
         }
     }
 
