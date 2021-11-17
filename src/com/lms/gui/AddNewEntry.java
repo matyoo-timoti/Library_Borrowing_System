@@ -1,8 +1,18 @@
 package com.lms.gui;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -52,7 +62,7 @@ class AddNewEntry {
 
     private static final String path = System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Library Borrowing System";
 
-    public static void main(String[] args) {
+    public static void new_entry_window(){
         WINDOW.setSize((int) (get_screen_width() / 2.7), (int) (get_screen_height() / 2.5));
         //Pop-up Notification   
         popup_label.setFont(new Font("Inter", Font.BOLD, 20));
