@@ -95,7 +95,7 @@ public class MainWindow {
         JPanel container = new JPanel();
         container.setBackground(Color.white);
         container.setBorder(new LineBorder(new Color(225, 225, 225)));
-        container.setSize(500, 100);
+        container.setPreferredSize(new Dimension(300, 75));
         container.setLayout(new FlowLayout());
         container.add(col_one);
         container.add(col_two);
@@ -119,8 +119,9 @@ public class MainWindow {
 
     private static void custom_scroll_pane(JScrollPane scroll_pane){
         scroll_pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scroll_pane.getVerticalScrollBar().setUnitIncrement(10);
+        scroll_pane.getVerticalScrollBar().setUnitIncrement(10);//10 is default
         scroll_pane.getVerticalScrollBar().setBackground(new Color(240, 240, 240));
+//        scroll_pane.getViewport().setScrollMode(JViewport.BLIT_SCROLL_MODE);
         scroll_pane.getVerticalScrollBar().setUI(new BasicScrollBarUI() {
             @Override
             protected JButton createDecreaseButton(int orientation) {
@@ -160,11 +161,11 @@ public class MainWindow {
 
         WINDOW.setLayout(new BorderLayout());
         WINDOW.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        WINDOW.setLocationRelativeTo(null);
         WINDOW.setVisible(true);
 //        WINDOW.add(container, BorderLayout.CENTER);
         WINDOW.add(scroll_pane);
         WINDOW.setSize(800, 500);
+        WINDOW.setLocationRelativeTo(null);
     }
 
     private static ImageIcon icon_resize(ImageIcon icon, int size) {
