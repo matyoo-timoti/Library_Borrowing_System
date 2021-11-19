@@ -5,19 +5,19 @@ import java.io.*;
 
 public class FileHandling {
 
-    private static final String path = System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Library Borrowing System";
+    private static final String PATH = System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Library Borrowing System";
 
     public void save(String book_title, String author_date, String ISBN, String borrower_name, String affiliation, String date_borrowed, String due_date) {
         StringBuilder id = new StringBuilder();
         id.append(book_title).append("_").append(borrower_name).append("_").append(date_borrowed).append("_").append(due_date);
-        File folder = new File(path);
+        File folder = new File(PATH);
         if (folder.exists() || folder.mkdirs()) {
-            File new_file = new File(path + File.separator + id + ".txt");
+            File new_file = new File(PATH + File.separator + id + ".txt");
             try {
                 if (new_file.createNewFile()) {
                     System.out.println("File created: " + new_file.getName());
                     try {
-                        FileWriter file_writer = new FileWriter(path + File.separator + id + ".txt");
+                        FileWriter file_writer = new FileWriter(PATH + File.separator + id + ".txt");
                         file_writer.write(book_title + "\n");
                         file_writer.write(author_date + "\n");
                         file_writer.write(ISBN + "\n");
@@ -45,7 +45,7 @@ public class FileHandling {
     public String[] retrieve(String id) {
         String[] entry = new String[7];
         try {
-            FileReader file_reader = new FileReader(path + File.separator + id + ".txt");
+            FileReader file_reader = new FileReader(PATH + File.separator + id + ".txt");
             BufferedReader buff_reader = new BufferedReader(file_reader);
             for (int line = 0; line < 7; line++) {
                 switch (line) {
@@ -65,4 +65,16 @@ public class FileHandling {
         }
         return entry;
     }
+
+    public static void list_files() throws IOException {
+        File directoryPath = new File(PATH);
+        File[] filesList = directoryPath.listFiles();
+        System.out.println("List of files and directories in the specified directory:");
+        for (File file : filesList) {
+            System.out.println("File name: " + file.getName());
+            System.out.println("File path: " + file.getAbsolutePath());
+            System.out.println();
+        }
+    }
+
 }
