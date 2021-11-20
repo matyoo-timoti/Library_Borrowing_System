@@ -17,151 +17,143 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-
 class AddNewEntry {
     private static final JFrame WINDOW = new JFrame("Library Borrowing System | Add New Entry");
-    private static final JButton BTN_SAVE = new JButton("Save");
-    private static final Color CADET_BLUE = new Color(88, 164, 176);
-    private static final JPanel cont_popup = new JPanel();
-    private static final JLabel label_popup = new JLabel("Entry Saved!");
-
-    //Title of the Book
-    private static final JLabel label_book = new JLabel("Title of the Book:");
-    private static final JPanel cont_book = new JPanel();
-    private static final JTextField tf_book = new JTextField();
-
-    //Author &  Date Published
-    private static final JLabel label_author = new JLabel("Author:");
-    private static final JTextField tf_author = new JTextField();
-    private static final JPanel cont_author = new JPanel();
-
-    //ISBN
-    private static final JLabel label_isbn = new JLabel("ISBN");
-    private static final JTextField tf_isbn = new JTextField();
-    private static final JPanel cont_isbn = new JPanel();
-
-    //Date Borrowed
-    private static final JLabel label_date_borrowed = new JLabel("Date Borrowed:");
-    private static final JTextField tf_date_borrowed = new JTextField();
-    private static final JPanel cont_date_borrowed = new JPanel();
-
-    //Name of Borrower
-    private static final JLabel label_borrower = new JLabel("Borrower Name:");
-    private static final JTextField tf_borrower = new JTextField();
-    private static final JPanel cont_borrower = new JPanel(new GridLayout(2, 1));
-
-    //Affiliation
-    private static final JLabel label_affiliation = new JLabel("Affiliation:");
-    private static final JTextField tf_affiliation = new JTextField();
-    private static final JPanel cont_affiliation = new JPanel(new GridLayout(2, 1));
-
-    //Due Date
-    private static final JLabel label_due = new JLabel("Due Date:");
-    private static final JTextField tf_due = new JTextField();
-    private static final JPanel cont_due = new JPanel(new GridLayout(2, 1));
+    private static final JButton SAVE_BUTTON = new JButton("Save");
+    private static final Color CADET_BLUE = Color.decode("#58A4B0");
+    private static final JTextField bookTextField = new JTextField();
+    private static final JTextField authorTextField = new JTextField();
+    private static final JTextField isbnTextField = new JTextField();
+    private static final JTextField dateBorrowedTextField = new JTextField();
+    private static final JTextField borrowerTextField = new JTextField();
+    private static final JTextField affiliationTextField = new JTextField();
+    private static final JTextField dueDateTextField = new JTextField();
 
     private static final String PATH = System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Library Borrowing System";
 
-    public static void main(String[] args) {
-        new_entry_window();
-    }
-
-    public static void new_entry_window(){
-        WINDOW.setSize((int) (get_screen_width() / 2.7), (int) (get_screen_height() / 2.5));
-        //Pop-up Notification
-        label_popup.setFont(new Font("Inter", Font.BOLD, 20));
-        label_popup.setForeground(Color.WHITE);
-        cont_popup.setSize(200, 40);
-        cont_popup.setBackground(new Color(148, 210, 189));
-        cont_popup.setBorder(BorderFactory.createLineBorder(new Color(94, 187, 156), 1, true));
-        cont_popup.add(label_popup);
-        cont_popup.setVisible(false); //hidden at first
+    public void newEntryWindow() {
+        JLabel bookLabel = new JLabel("Title of the Book:");
+        JLabel authorLabel = new JLabel("Author:");
+        JLabel isbnLabel = new JLabel("ISBN");
+        JLabel dateBorrowedLabel = new JLabel("Date Borrowed:");
+        JLabel borrowedLabel = new JLabel("Borrower Name:");
+        JLabel affiliationLabel = new JLabel("Affiliation:");
+        JLabel dueDateLabel = new JLabel("Due Date:");
+        JPanel bookCont = new JPanel();
+        JPanel authorCont = new JPanel();
+        JPanel isbnCont = new JPanel();
+        JPanel dateBorrowedCont = new JPanel();
+        JPanel borrowerCont = new JPanel(new GridLayout(2, 1));
+        JPanel affiliationCont = new JPanel(new GridLayout(2, 1));
+        JPanel dueDateCont = new JPanel(new GridLayout(2, 1));
 
         //Placeholder
-        placeholder(tf_book, "E.g. Violet Evergarden");
-        placeholder(tf_isbn, "E.g. 9784907064433");
-        placeholder(tf_author, "E.g. Akatsuki Kana");
-        placeholder(tf_borrower, "E.g. Matthew Cabarle");
-        placeholder(tf_affiliation, "E.g. ICS / BSIT-2C");
-        placeholder(tf_date_borrowed, "mm-dd-yyyy");
-        placeholder(tf_due, "mm-dd-yyyy");
+        placeholder(bookTextField, "Enter Book Title");
+        placeholder(isbnTextField, "Must have at least 10 digits");
+        placeholder(authorTextField, "Last Name, First Name");
+        placeholder(borrowerTextField, "Last Name, First Name");
+        placeholder(affiliationTextField, "Department/Course/Year/Block");
+        placeholder(dateBorrowedTextField, "MM-DD-YYYY");
+        placeholder(dueDateTextField, "MM-DD-YYYY");
 
         //Title Container
         JLabel title = new JLabel("Add New Entry", JLabel.LEFT);
         title.setFont(new Font("Inter", Font.BOLD, 30));
         title.setForeground(Color.WHITE);
-        JPanel panel_title = new JPanel();
-        panel_title.setLayout(new BorderLayout());
-        panel_title.setBackground(CADET_BLUE);
-        panel_title.setSize(-1, 200);
-        panel_title.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-        panel_title.add(title, BorderLayout.LINE_START);
-        panel_title.add(cont_popup, BorderLayout.EAST);
+        JPanel titleContainer = new JPanel();
+        titleContainer.setLayout(new BorderLayout());
+        titleContainer.setBackground(CADET_BLUE);
+        titleContainer.setSize(-1, 200);
+        titleContainer.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        titleContainer.add(title, BorderLayout.LINE_START);
 
-        //Left Side Container
-        JPanel cont_left = new JPanel();
-        cont_left.setLayout(new GridLayout(4, 1));
-        cont_left.setBackground(Color.white);
-        cont_left.setSize(100, -1);
-        cont_left.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 10));
-        cont_left.add(panel_format(cont_book, label_book, tf_book));
-        cont_left.add(panel_format(cont_author, label_author, tf_author));
-        cont_left.add(panel_format(cont_isbn, label_isbn, tf_isbn));
-        cont_left.add(panel_format(cont_date_borrowed, label_date_borrowed, tf_date_borrowed));
+        /*
+         * The left panel is the container for the
+         * Title of the Book field, Author,
+         * ISBN, and Date Borrowed fields.
+         * */
+        JPanel left = new JPanel();
+        left.setLayout(new GridLayout(4, 1));
+        left.setBackground(Color.white);
+        left.setSize(100, -1);
+        left.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 10));
+        left.add(panelFormat(bookCont, bookLabel, bookTextField));
+        left.add(panelFormat(authorCont, authorLabel, authorTextField));
+        left.add(panelFormat(isbnCont, isbnLabel, isbnTextField));
+        left.add(panelFormat(dateBorrowedCont, dateBorrowedLabel, dateBorrowedTextField));
 
-        //Right Side Container
-        JPanel cont_right = new JPanel(new GridLayout(4, 1));
-        cont_right.setBackground(Color.white);
-        cont_right.setSize(100, -1);
-        cont_right.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 20));
-        cont_right.add(panel_format(cont_borrower, label_borrower, tf_borrower));
-        cont_right.add(panel_format(cont_affiliation, label_affiliation, tf_affiliation));
-        cont_right.add(panel_format(cont_due, label_due, tf_due));
+        /*
+         * The right panel is the container for the
+         * Borrower Name, Affiliation, and  Due Date fields,
+         * along with the Save button
+         * */
+        JPanel right = new JPanel(new GridLayout(4, 1));
+        right.setBackground(Color.white);
+        right.setSize(100, -1);
+        right.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 20));
+        right.add(panelFormat(borrowerCont, borrowedLabel, borrowerTextField));
+        right.add(panelFormat(affiliationCont, affiliationLabel, affiliationTextField));
+        right.add(panelFormat(dueDateCont, dueDateLabel, dueDateTextField));
+        JPanel saveBtnContainer = new JPanel(new BorderLayout());
+        saveBtnContainer.setBackground(Color.white);
+        saveBtnContainer.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        SAVE_BUTTON.setFont(new Font("Inter", Font.BOLD, 18));
+        SAVE_BUTTON.setForeground(Color.white);
+        SAVE_BUTTON.setBackground(CADET_BLUE);
+        saveBtnContainer.add(SAVE_BUTTON, BorderLayout.CENTER);
+        right.add(saveBtnContainer);
 
-        //Save Button
-        JPanel cont_btn_save = new JPanel(new BorderLayout());
-        cont_btn_save.setBackground(Color.white);
-        cont_btn_save.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        BTN_SAVE.setFont(new Font("Inter", Font.BOLD, 18));
-        BTN_SAVE.setForeground(Color.white);
-        BTN_SAVE.setBackground(CADET_BLUE);
-        cont_btn_save.add(BTN_SAVE, BorderLayout.CENTER);
-        cont_right.add(cont_btn_save);
+        /*
+         * The inner Cont is the container for
+         * both the left and right Container.
+         * */
+        JPanel innerCont = new JPanel();
+        innerCont.setLayout(new GridLayout(0, 2));
+        innerCont.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
+        innerCont.setBackground(Color.white);
+        innerCont.add(left);
+        innerCont.add(right);
 
-        //Inner Container
-        JPanel cont_inner = new JPanel();
-        cont_inner.setLayout(new GridLayout(0, 2));
-        cont_inner.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
-        cont_inner.setBackground(Color.white);
-        cont_inner.add(cont_left);
-        cont_inner.add(cont_right);
+        /*
+         * The main Cont is the container for all
+         * the components
+         * */
+        JPanel mainCont = new JPanel();
+        mainCont.setLayout(new GridLayout());
+        mainCont.setOpaque(true);
+        mainCont.setBackground(new Color(255, 255, 255, 10));
 
-        //Main Container
-        JPanel cont_main = new JPanel();
-        cont_main.setLayout(new GridLayout());
-        cont_main.setOpaque(true);
-        cont_main.setBackground(new Color(255, 255, 255, 10));
-
-        //Window Configuration
-        WINDOW.setContentPane(cont_main);
+        /*
+         * Adding attributes to the JFrame/window
+         * */
+        WINDOW.setSize((int) (get_screen_width() / 2.7), (int) (get_screen_height() / 2.5));
+        WINDOW.setContentPane(mainCont);
         WINDOW.setLayout(new BorderLayout());
-        WINDOW.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        WINDOW.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         WINDOW.setLocationRelativeTo(null);
         WINDOW.setVisible(true);
-        WINDOW.add(panel_title, BorderLayout.NORTH);
-        WINDOW.add(cont_inner, BorderLayout.CENTER);
+        WINDOW.add(titleContainer, BorderLayout.NORTH);
+        WINDOW.add(innerCont, BorderLayout.CENTER);
         WINDOW.setResizable(false);
 
-        BTN_SAVE.addActionListener(e -> {
-            var bt = get_text(tf_book);
-            var ad = get_text(tf_author);
-            var is = get_text(tf_isbn);
-            var bn = get_text(tf_borrower);
-            var af = get_text(tf_affiliation);
-            var db = get_text(tf_date_borrowed);
-            var dd = get_text(tf_due);
-
-            if (form_incomplete()) {
+        /*
+         * Clicking the save button will retrieve the text
+         * from the text fields inserted by the user and
+         * saved as a string.
+         *
+         * If at least one of the fields is empty, it will
+         * show an error dialogue. Else if there are
+         * no errors, it displays a
+         * */
+        SAVE_BUTTON.addActionListener(e -> {
+            var bt = get_text(bookTextField);
+            var ad = get_text(authorTextField);
+            var is = get_text(isbnTextField);
+            var bn = get_text(borrowerTextField);
+            var af = get_text(affiliationTextField);
+            var db = get_text(dateBorrowedTextField);
+            var dd = get_text(dueDateTextField);
+            if (isUnfilled()) {
                 JOptionPane.showMessageDialog(WINDOW, "Fields can't be empty!", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
                 save(bt, ad, is, bn, af, db, dd);
@@ -171,17 +163,18 @@ class AddNewEntry {
         });
     }
 
+    public boolean isRunning() {
+        return WINDOW.isVisible();
+    }
+
     private static void placeholder(JTextField tf, String text) {
         TextPrompt tx = new TextPrompt(text, tf);
-        tx.setForeground(Color.lightGray);
+        tx.setForeground(Color.GRAY);
+//        tx.setForeground(Color.decode("#232323"));
         tx.setFont(new Font("Inter Medium", Font.PLAIN, 14));
     }
 
-    private static void popup() {
-        cont_popup.setVisible(!cont_popup.isVisible());
-    }
-
-    public static void save(String book, String author, String isbn, String borrower, String
+    private static void save(String book, String author, String isbn, String borrower, String
             affiliation, String date_borrowed, String due) {
         StringBuilder id = new StringBuilder();
         id.append(book).append("_").append(borrower).append("_").append(date_borrowed).append("_").append(due);
@@ -213,39 +206,39 @@ class AddNewEntry {
                 e.printStackTrace();
             }
         } else {
-            System.out.println("Not created");
+            System.out.println("File Not created");
         }
     }
 
-    private static boolean form_incomplete() {
-        var bt = get_text(tf_book);
-        var ad = get_text(tf_author);
-        var is = get_text(tf_isbn);
-        var bn = get_text(tf_borrower);
-        var af = get_text(tf_affiliation);
-        var db = get_text(tf_date_borrowed);
-        var dd = get_text(tf_due);
+    private static boolean isUnfilled() {
+        var bt = get_text(bookTextField);
+        var ad = get_text(authorTextField);
+        var is = get_text(isbnTextField);
+        var bn = get_text(borrowerTextField);
+        var af = get_text(affiliationTextField);
+        var db = get_text(dateBorrowedTextField);
+        var dd = get_text(dueDateTextField);
         return bt.isEmpty() || ad.isEmpty() || is.isEmpty() || bn.isEmpty() || af.isEmpty() || db.isEmpty() || dd.isEmpty();
     }
 
-    private static JPanel panel_format(JPanel panel, JLabel label, JTextField field) {
+    private static JPanel panelFormat(JPanel panel, JLabel label, JTextField field) {
         panel.setLayout(new GridLayout(2, 1));
         panel.setBackground(Color.white);
-        panel.add(label_format(label));
-        panel.add(field_format(field));
+        panel.add(labelFormat(label));
+        panel.add(textFieldFormat(field));
         return panel;
     }
 
-    private static JLabel label_format(JLabel label) {
+    private static JLabel labelFormat(JLabel label) {
         label.setForeground(Color.black);
         label.setFont(new Font("Inter Medium", Font.PLAIN, 15));
         return label;
     }
 
-    private static JTextField field_format(JTextField tf) {
+    private static JTextField textFieldFormat(JTextField tf) {
         tf.setFont(new Font("Inter Medium", Font.PLAIN, 15));
-        tf.setBackground(new Color(252, 252, 252)); // default 248,248,248
-        tf.setBorder(new LineBorder(new Color(210, 210, 210))); //default 255,255,255
+        tf.setBackground(new Color(248, 248, 248)); // default 248,248,248
+        tf.setBorder(new LineBorder(Color.LIGHT_GRAY)); //default 255,255,255
         return tf;
     }
 
@@ -259,13 +252,5 @@ class AddNewEntry {
 
     private static double get_screen_height() {
         return Toolkit.getDefaultToolkit().getScreenSize().getHeight();
-    }
-
-    private static void delay(int millis) {
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 }
