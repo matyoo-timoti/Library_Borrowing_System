@@ -1,15 +1,6 @@
 package com.lms.gui;
 
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.BorderLayout;
@@ -191,35 +182,35 @@ public class MainWindow {
     }
 
     public void mainWindow() {
-        var crud = new FileHandling();
-        String[] entryContents = crud.retrieve("Violet Evergarden_Matthew Cabarle_11-19-2021_12-01-2021");
-        String[] entryContents1 = crud.retrieve("MC-11-12-2021-11-15-2021");
-        String[] entryContents2 = crud.retrieve("MM-11-15-2010-12-12-2011");
+        var handler = new FileHandling();
+        String[] entryContents = handler.retrieve("Violet Evergarden_Matthew Cabarle_11-19-2021_12-01-2021");
+        String[] entryContents1 = handler.retrieve("MC-11-12-2021-11-15-2021");
+        String[] entryContents2 = handler.retrieve("MM-11-15-2010-12-12-2011");
 
-        JPanel contNorth = new JPanel();
-        contNorth.setLayout(new BoxLayout(contNorth, BoxLayout.Y_AXIS));
+        JPanel topCont = new JPanel();
+        topCont.setLayout(new BoxLayout(topCont, BoxLayout.Y_AXIS));
 
-        JPanel contTitle = new JPanel(new BorderLayout());
-        contTitle.setBorder(new EmptyBorder(20, 15, 20, 10));
-        contTitle.setBackground(new Color(43, 48, 58));
+        JPanel titleCont = new JPanel(new BorderLayout());
+        titleCont.setBorder(new EmptyBorder(20, 15, 20, 10));
+        titleCont.setBackground(new Color(43, 48, 58));
 
-        JLabel labelTitle = new JLabel("Library Borrowing System");
-        labelFormat(labelTitle, Color.white, 45);
-        contTitle.add(labelTitle, BorderLayout.LINE_START);
-        contNorth.add(contTitle);
+        JLabel title = new JLabel("Library Borrowing System");
+        labelFormat(title, Color.white, 45);
+        titleCont.add(title, BorderLayout.LINE_START);
+        topCont.add(titleCont);
 
-        JPanel contNorthMiddle = new JPanel();
-        contNorthMiddle.setLayout(new BoxLayout(contNorthMiddle, BoxLayout.Y_AXIS));
+        JPanel middleCont = new JPanel();
+        middleCont.setLayout(new BoxLayout(middleCont, BoxLayout.Y_AXIS));
 
-        JPanel contNorthMiddleTop = new JPanel(new BorderLayout());
-        contNorthMiddleTop.setBorder(new EmptyBorder(10, 10, 10, 10));
-        contNorthMiddleTop.add(BTN_ADD_NEW, BorderLayout.LINE_START);
-        contNorthMiddleTop.add(BTN_SORT, BorderLayout.LINE_END);
+        JPanel insideMiddleTop = new JPanel(new BorderLayout());
+        insideMiddleTop.setBorder(new EmptyBorder(10, 10, 10, 10));
+        insideMiddleTop.add(BTN_ADD_NEW, BorderLayout.LINE_START);
+        insideMiddleTop.add(BTN_SORT, BorderLayout.LINE_END);
 
-        JPanel contNorthMiddleBot = new JPanel(new GridBagLayout());
-        contNorthMiddleBot.setLayout(new GridLayout(0, 6));
-        contNorthMiddleBot.setBorder(new EmptyBorder(0, 11, 0, 18));
-        contNorthMiddleBot.setBackground(Color.WHITE);
+        JPanel insideMiddleBot = new JPanel(new GridBagLayout());
+        insideMiddleBot.setLayout(new GridLayout(0, 6));
+        insideMiddleBot.setBorder(new EmptyBorder(0, 11, 0, 18));
+        insideMiddleBot.setBackground(Color.WHITE);
 
         JPanel contLabel0 = colName("Book");
         JPanel contLabel1 = colName("Borrower");
@@ -227,25 +218,25 @@ public class MainWindow {
         JPanel contLabel3 = colName("Due Date");
         JPanel contLabel4 = colName("Returned");
         JPanel contLabel5 = colName("Actions");
-        contNorthMiddleBot.add(contLabel0);
-        contNorthMiddleBot.add(contLabel1);
-        contNorthMiddleBot.add(contLabel2);
-        contNorthMiddleBot.add(contLabel3);
-        contNorthMiddleBot.add(contLabel4);
-        contNorthMiddleBot.add(contLabel5);
-        contNorthMiddle.add(contNorthMiddleTop);
-        contNorthMiddle.add(contNorthMiddleBot);
-        contNorth.add(contNorthMiddle);
+        insideMiddleBot.add(contLabel0);
+        insideMiddleBot.add(contLabel1);
+        insideMiddleBot.add(contLabel2);
+        insideMiddleBot.add(contLabel3);
+        insideMiddleBot.add(contLabel4);
+        insideMiddleBot.add(contLabel5);
+        middleCont.add(insideMiddleTop);
+        middleCont.add(insideMiddleBot);
+        topCont.add(middleCont);
 
-        JSeparator sep = new JSeparator();
-        sep.setOrientation(1);
         JPanel contRows = new JPanel();
         contRows.setLayout(new BoxLayout(contRows, BoxLayout.Y_AXIS));
         for (int i = 0; i < 30; i++) {
             contRows.add(showInRows(entryContents));
+            contRows.add(new JToolBar.Separator(new Dimension(0, 3)));
             contRows.add(showInRows(entryContents1));
+            contRows.add(new JToolBar.Separator(new Dimension(0, 3)));
             contRows.add(showInRows(entryContents2));
-            contRows.add(sep);
+            contRows.add(new JToolBar.Separator(new Dimension(0, 3)));
         }
 
         UIManager.put("ScrollBar.width", ((int) UIManager.get("ScrollBar.width") - 10));
@@ -254,7 +245,7 @@ public class MainWindow {
 
         WINDOW.setLayout(new BorderLayout());
         WINDOW.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        WINDOW.add(contNorth, BorderLayout.NORTH);
+        WINDOW.add(topCont, BorderLayout.NORTH);
         WINDOW.add(scrollPane, BorderLayout.CENTER);
         WINDOW.setMinimumSize(new Dimension(1000, 500));
         WINDOW.setSize(900,500);
