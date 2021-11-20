@@ -146,21 +146,35 @@ class AddNewEntry {
          * no errors, it displays a
          * */
         SAVE_BUTTON.addActionListener(e -> {
-            var bt = get_text(bookTextField);
-            var ad = get_text(authorTextField);
-            var is = get_text(isbnTextField);
-            var bn = get_text(borrowerTextField);
-            var af = get_text(affiliationTextField);
-            var db = get_text(dateBorrowedTextField);
-            var dd = get_text(dueDateTextField);
+            var book = get_text(bookTextField);
+            var author = get_text(authorTextField);
+            var isbn = get_text(isbnTextField);
+            var borrower = get_text(borrowerTextField);
+            var affiliation = get_text(affiliationTextField);
+            var dateBorrowed = get_text(dateBorrowedTextField);
+            var dueDate = get_text(dueDateTextField);
+
             if (isUnfilled()) {
                 JOptionPane.showMessageDialog(WINDOW, "Fields can't be empty!", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                save(bt, ad, is, bn, af, db, dd);
+                var storeData = new StoreData();
+                storeData.setBook(book);
+                storeData.setAuthor(author);
+                storeData.setIsbn(isbn);
+                storeData.setBorrower(borrower);
+                storeData.setAffiliation(affiliation);
+                storeData.setDateBorrowed(dateBorrowed);
+                storeData.setDueDate(dueDate);
+                storeData.store();
                 JOptionPane.showMessageDialog(WINDOW, "Entry Saved", "Notification", JOptionPane.PLAIN_MESSAGE);
                 WINDOW.dispose();
             }
         });
+    }
+
+    public static void main(String[] args) {
+        var entry = new AddNewEntry();
+        entry.newEntryWindow();
     }
 
     public boolean isRunning() {
@@ -172,42 +186,6 @@ class AddNewEntry {
         tx.setForeground(Color.GRAY);
 //        tx.setForeground(Color.decode("#232323"));
         tx.setFont(new Font("Inter Medium", Font.PLAIN, 14));
-    }
-
-    private static void save(String book, String author, String isbn, String borrower, String
-            affiliation, String date_borrowed, String due) {
-        StringBuilder id = new StringBuilder();
-        id.append(book).append("_").append(borrower).append("_").append(date_borrowed).append("_").append(due);
-        File folder = new File(PATH);
-        if (folder.exists() || folder.mkdirs()) {
-            File new_file = new File(PATH + File.separator + id + ".txt");
-            try {
-                if (new_file.createNewFile()) {
-                    System.out.println("File created: " + new_file.getName());
-                    try {
-                        FileWriter file_writer = new FileWriter(PATH + File.separator + id + ".txt");
-                        file_writer.write(book + "\n");
-                        file_writer.write(author + "\n");
-                        file_writer.write(isbn + "\n");
-                        file_writer.write(borrower + "\n");
-                        file_writer.write(affiliation + "\n");
-                        file_writer.write(date_borrowed + "\n");
-                        file_writer.write(due);
-                        file_writer.close();
-                    } catch (IOException e) {
-                        JOptionPane.showMessageDialog(WINDOW, "An Error Occurred");
-                        e.printStackTrace();
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(WINDOW, "There are similar entry in the system.", "Error", JOptionPane.ERROR_MESSAGE);
-                    System.out.println("File Already Exists!");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            System.out.println("File Not created");
-        }
     }
 
     private static boolean isUnfilled() {
