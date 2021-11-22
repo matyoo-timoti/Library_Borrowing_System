@@ -7,7 +7,8 @@ public class CreateFile {
 
     private File file;
     private final String folderPath;
-        public String getFolderPath() {
+
+    public String getFolderPath() {
         return folderPath;
     }
 
@@ -44,17 +45,6 @@ public class CreateFile {
             System.out.println("ERROR: Cannot write in file.");
             e.printStackTrace();
             System.out.println("______________________________________________________________________________");
-            System.out.println("ERROR: File Does Not Exists!");
-        }
-    }
-
-    public void overwrite(String filePath, String text) {
-        try (FileWriter fw = new FileWriter(filePath, false);
-             BufferedWriter bw = new BufferedWriter(fw);
-             PrintWriter out = new PrintWriter(bw)) {
-            out.println(text);
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "There are similar entry in the system.", "Error", JOptionPane.ERROR_MESSAGE);
             System.out.println("ERROR: File Does Not Exists!");
         }
     }
