@@ -6,20 +6,12 @@ import java.io.*;
 public class UpdateFile {
     private final File file;
 
-    private static final String PATH = System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Library Borrowing System";
-
     public UpdateFile(String filePath) {
         file = new File(filePath);
     }
 
     public UpdateFile (File file) {
         this.file = file;
-    }
-
-    public static void main(String[] args) {
-        var update = new UpdateFile(PATH + File.separator + "qwerty_Matthew_11-22-2021_12-01-2021" + ".txt");
-        update.clear();
-        update.writeln("newline after overwritten.");
     }
 
     public void write(String text) {

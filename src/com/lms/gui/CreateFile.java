@@ -12,6 +12,10 @@ public class CreateFile {
         return folderPath;
     }
 
+    public File getFile() {
+        return file;
+    }
+
     public CreateFile(String path, String fileName) {
         this.folderPath = path;
         File folder = new File(folderPath);
@@ -32,21 +36,4 @@ public class CreateFile {
             System.out.println("Not created");
         }
     }
-
-    public void write(String text) {
-        try (FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
-             BufferedWriter bw = new BufferedWriter(fw);
-             PrintWriter out = new PrintWriter(bw)) {
-            out.println(text);
-            System.out.println("File is updated.");
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "An Error Occurred");
-            System.out.println("______________________________________________________________________________");
-            System.out.println("ERROR: Cannot write in file.");
-            e.printStackTrace();
-            System.out.println("______________________________________________________________________________");
-            System.out.println("ERROR: File Does Not Exists!");
-        }
-    }
-
 }

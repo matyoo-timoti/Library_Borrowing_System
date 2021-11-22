@@ -157,13 +157,14 @@ class AddNewEntry {
             } else {
                 String id = book + "_" + borrower + "_" + dateBorrowed + "_" + dueDate;
                 var file = new CreateFile(PATH + File.separator, id);
-                file.write(book);
-                file.write(author);
-                file.write(isbn);
-                file.write(borrower);
-                file.write(affiliation);
-                file.write(dateBorrowed);
-                file.write(dueDate);
+                var updateFile = new UpdateFile(file.getFile());
+                updateFile.writeln(book);
+                updateFile.writeln(author);
+                updateFile.writeln(isbn);
+                updateFile.writeln(borrower);
+                updateFile.writeln(affiliation);
+                updateFile.writeln(dateBorrowed);
+                updateFile.writeln(dueDate);
                 JOptionPane.showMessageDialog(WINDOW, "Entry Saved", "Notification", JOptionPane.PLAIN_MESSAGE);
                 WINDOW.dispose();
             }
