@@ -14,8 +14,6 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 
 class AddNewEntry {
     private static final JFrame WINDOW = new JFrame("Library Borrowing System | Add New Entry");
@@ -157,15 +155,15 @@ class AddNewEntry {
             if (isUnfilled()) {
                 JOptionPane.showMessageDialog(WINDOW, "Fields can't be empty!", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                var storeData = new StoreData();
-                storeData.setBook(book);
-                storeData.setAuthor(author);
-                storeData.setIsbn(isbn);
-                storeData.setBorrower(borrower);
-                storeData.setAffiliation(affiliation);
-                storeData.setDateBorrowed(dateBorrowed);
-                storeData.setDueDate(dueDate);
-                storeData.store();
+                String id = book + "_" + borrower + "_" + dateBorrowed + "_" + dueDate;
+                var file = new CreateFile(PATH + File.separator, id);
+                file.write(book);
+                file.write(author);
+                file.write(isbn);
+                file.write(borrower);
+                file.write(affiliation);
+                file.write(dateBorrowed);
+                file.write(dueDate);
                 JOptionPane.showMessageDialog(WINDOW, "Entry Saved", "Notification", JOptionPane.PLAIN_MESSAGE);
                 WINDOW.dispose();
             }

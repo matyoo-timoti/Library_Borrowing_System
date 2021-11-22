@@ -38,26 +38,76 @@ public class MainWindow {
         });
     }
 
-    private static void labelFormat(JLabel label1, JLabel label2) {
-        label1.setForeground(Color.black);
-        label1.setFont(new Font("Inter", Font.BOLD, 18));
-        label2.setForeground(Color.black);
-        label2.setFont(new Font("Inter", Font.PLAIN, 12));
-    }
+    public void mainWindow() {
+        var handler = new FileHandling();
+        String[] entryContents = handler.retrieve("Violet Evergarden_Matthew Cabarle_11-19-2021_12-01-2021");
+        String[] entryContents1 = handler.retrieve("MC-11-12-2021-11-15-2021");
+        String[] entryContents2 = handler.retrieve("MM-11-15-2010-12-12-2011");
 
-    private static void labelFormat(Component label, Color fontColor, int fontSize) {
-        label.setForeground(fontColor);
-        label.setFont(new Font("Inter", Font.BOLD, fontSize));
-    }
+        JPanel topCont = new JPanel();
+        topCont.setLayout(new BoxLayout(topCont, BoxLayout.Y_AXIS));
 
-    private static void panelFormat(JPanel panel) {
-        panel.setBorder(new EmptyBorder(10, 20, 10, 20));
-        panel.setBackground(Color.white);
-    }
+        JPanel titleCont = new JPanel(new BorderLayout());
+        titleCont.setBorder(new EmptyBorder(20, 15, 20, 10));
+        titleCont.setBackground(new Color(43, 48, 58));
 
-    private static void buttonFormat(JButton button, ImageIcon icon) {
-        button.setIcon(iconResize(icon, 34));
-        button.setPreferredSize(new Dimension(34, 34));
+        JLabel title = new JLabel("Library Borrowing System");
+        labelFormat(title, Color.white, 45);
+        titleCont.add(title, BorderLayout.LINE_START);
+        topCont.add(titleCont);
+
+        JPanel middleCont = new JPanel();
+        middleCont.setLayout(new BoxLayout(middleCont, BoxLayout.Y_AXIS));
+
+        JPanel insideMiddleTop = new JPanel(new BorderLayout());
+        insideMiddleTop.setBorder(new EmptyBorder(10, 10, 10, 10));
+        insideMiddleTop.add(BTN_ADD_NEW, BorderLayout.LINE_START);
+        insideMiddleTop.add(BTN_SORT, BorderLayout.LINE_END);
+
+        JPanel insideMiddleBot = new JPanel(new GridBagLayout());
+        insideMiddleBot.setLayout(new GridLayout(0, 6));
+        insideMiddleBot.setBorder(new EmptyBorder(0, 11, 0, 8));
+        insideMiddleBot.setBackground(Color.WHITE);
+
+        JPanel contLabel0 = colName("Book");
+        JPanel contLabel1 = colName("Borrower");
+        JPanel contLabel2 = colName("Date Borrowed");
+        JPanel contLabel3 = colName("Due Date");
+        JPanel contLabel4 = colName("Returned");
+        JPanel contLabel5 = colName("Actions");
+        insideMiddleBot.add(contLabel0);
+        insideMiddleBot.add(contLabel1);
+        insideMiddleBot.add(contLabel2);
+        insideMiddleBot.add(contLabel3);
+        insideMiddleBot.add(contLabel4);
+        insideMiddleBot.add(contLabel5);
+        middleCont.add(insideMiddleTop);
+        middleCont.add(insideMiddleBot);
+        topCont.add(middleCont);
+
+        JPanel contRows = new JPanel();
+        contRows.setLayout(new BoxLayout(contRows, BoxLayout.Y_AXIS));
+        for (int i = 0; i < 30; i++) {
+            contRows.add(showInRows(entryContents));
+            contRows.add(new JToolBar.Separator(new Dimension(0, 3)));
+            contRows.add(showInRows(entryContents1));
+            contRows.add(new JToolBar.Separator(new Dimension(0, 3)));
+            contRows.add(showInRows(entryContents2));
+            contRows.add(new JToolBar.Separator(new Dimension(0, 3)));
+        }
+
+        UIManager.put("ScrollBar.width", ((int) UIManager.get("ScrollBar.width") - 10));
+        JScrollPane scrollPane = new JScrollPane(contRows);
+        customScrollPane(scrollPane);
+
+        WINDOW.setLayout(new BorderLayout());
+        WINDOW.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        WINDOW.add(topCont, BorderLayout.NORTH);
+        WINDOW.add(scrollPane, BorderLayout.CENTER);
+        WINDOW.setMinimumSize(new Dimension(1000, 500));
+        WINDOW.setSize(900, 500);
+        WINDOW.setVisible(true);
+        WINDOW.setLocationRelativeTo(null);
     }
 
     private static JPanel showInRows(String[] attrib) {
@@ -100,19 +150,20 @@ public class MainWindow {
         panelFormat(c6);
         JButton edBtn = new JButton();
         ImageIcon edIco = new ImageIcon(ICON_PATH + File.separator + "edit_icon.png");
-        buttonFormat(edBtn, edIco);
+        iconResize(edIco, 40);
+        buttonFormat(edBtn, 34, edIco);
         edBtn.setBackground(Color.white);
         JButton delBtn = new JButton();
         delBtn.setBackground(Color.white);
         ImageIcon delIco = new ImageIcon(ICON_PATH + File.separator + "delete_icon1.png");
-        buttonFormat(delBtn, delIco);
+        buttonFormat(delBtn, 34, delIco);
         c6.add(edBtn, new GridBagConstraints());
-        c6.add(createRigidArea(new Dimension(25,0)));
+        c6.add(createRigidArea(new Dimension(25, 0)));
         c6.add(delBtn, new GridBagConstraints());
 
         JPanel container = new JPanel();
         container.setBackground(Color.white);
-        container.setBorder(new EmptyBorder(0, 10, 0, 10));
+        container.setBorder(new EmptyBorder(0, 10, 0, 0));
         container.setLayout(new GridLayout(1, 6));
         container.setPreferredSize(new Dimension(700, 60));
         container.setMaximumSize(new Dimension(2000, 70));
@@ -123,6 +174,29 @@ public class MainWindow {
         container.add(c5);
         container.add(c6);
         return container;
+    }
+
+    private static void labelFormat(JLabel label1, JLabel label2) {
+        label1.setForeground(Color.black);
+        label1.setFont(new Font("Inter", Font.BOLD, 18));
+        label2.setForeground(Color.black);
+        label2.setFont(new Font("Inter", Font.PLAIN, 12));
+    }
+
+    private static void labelFormat(Component label, Color fontColor, int fontSize) {
+        label.setForeground(fontColor);
+        label.setFont(new Font("Inter", Font.BOLD, fontSize));
+    }
+
+    private static void panelFormat(JPanel panel) {
+        panel.setBorder(new EmptyBorder(10, 20, 10, 20));
+        panel.setBackground(Color.white);
+    }
+
+    private static void buttonFormat(JButton button, int size, ImageIcon icon) {
+        button.setIcon(iconResize(icon, 34));
+        button.setPreferredSize(new Dimension(size, size));
+        button.setBorder(new EmptyBorder(0, 0, 0, 0));
     }
 
     private static void customScrollPane(JScrollPane scroll_pane) {
@@ -179,78 +253,6 @@ public class MainWindow {
             }
         });
 
-    }
-
-    public void mainWindow() {
-        var handler = new FileHandling();
-        String[] entryContents = handler.retrieve("Violet Evergarden_Matthew Cabarle_11-19-2021_12-01-2021");
-        String[] entryContents1 = handler.retrieve("MC-11-12-2021-11-15-2021");
-        String[] entryContents2 = handler.retrieve("MM-11-15-2010-12-12-2011");
-
-        JPanel topCont = new JPanel();
-        topCont.setLayout(new BoxLayout(topCont, BoxLayout.Y_AXIS));
-
-        JPanel titleCont = new JPanel(new BorderLayout());
-        titleCont.setBorder(new EmptyBorder(20, 15, 20, 10));
-        titleCont.setBackground(new Color(43, 48, 58));
-
-        JLabel title = new JLabel("Library Borrowing System");
-        labelFormat(title, Color.white, 45);
-        titleCont.add(title, BorderLayout.LINE_START);
-        topCont.add(titleCont);
-
-        JPanel middleCont = new JPanel();
-        middleCont.setLayout(new BoxLayout(middleCont, BoxLayout.Y_AXIS));
-
-        JPanel insideMiddleTop = new JPanel(new BorderLayout());
-        insideMiddleTop.setBorder(new EmptyBorder(10, 10, 10, 10));
-        insideMiddleTop.add(BTN_ADD_NEW, BorderLayout.LINE_START);
-        insideMiddleTop.add(BTN_SORT, BorderLayout.LINE_END);
-
-        JPanel insideMiddleBot = new JPanel(new GridBagLayout());
-        insideMiddleBot.setLayout(new GridLayout(0, 6));
-        insideMiddleBot.setBorder(new EmptyBorder(0, 11, 0, 18));
-        insideMiddleBot.setBackground(Color.WHITE);
-
-        JPanel contLabel0 = colName("Book");
-        JPanel contLabel1 = colName("Borrower");
-        JPanel contLabel2 = colName("Date Borrowed");
-        JPanel contLabel3 = colName("Due Date");
-        JPanel contLabel4 = colName("Returned");
-        JPanel contLabel5 = colName("Actions");
-        insideMiddleBot.add(contLabel0);
-        insideMiddleBot.add(contLabel1);
-        insideMiddleBot.add(contLabel2);
-        insideMiddleBot.add(contLabel3);
-        insideMiddleBot.add(contLabel4);
-        insideMiddleBot.add(contLabel5);
-        middleCont.add(insideMiddleTop);
-        middleCont.add(insideMiddleBot);
-        topCont.add(middleCont);
-
-        JPanel contRows = new JPanel();
-        contRows.setLayout(new BoxLayout(contRows, BoxLayout.Y_AXIS));
-        for (int i = 0; i < 30; i++) {
-            contRows.add(showInRows(entryContents));
-            contRows.add(new JToolBar.Separator(new Dimension(0, 3)));
-            contRows.add(showInRows(entryContents1));
-            contRows.add(new JToolBar.Separator(new Dimension(0, 3)));
-            contRows.add(showInRows(entryContents2));
-            contRows.add(new JToolBar.Separator(new Dimension(0, 3)));
-        }
-
-        UIManager.put("ScrollBar.width", ((int) UIManager.get("ScrollBar.width") - 10));
-        JScrollPane scrollPane = new JScrollPane(contRows);
-        customScrollPane(scrollPane);
-
-        WINDOW.setLayout(new BorderLayout());
-        WINDOW.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        WINDOW.add(topCont, BorderLayout.NORTH);
-        WINDOW.add(scrollPane, BorderLayout.CENTER);
-        WINDOW.setMinimumSize(new Dimension(1000, 500));
-        WINDOW.setSize(900,500);
-        WINDOW.setVisible(true);
-        WINDOW.setLocationRelativeTo(null);
     }
 
     private static JPanel colName(String text) {
