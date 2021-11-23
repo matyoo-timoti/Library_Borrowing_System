@@ -1,7 +1,8 @@
 package com.lms.gui;
 
 import javax.swing.JOptionPane;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 
 public class CreateFile {
 

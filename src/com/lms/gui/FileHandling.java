@@ -4,42 +4,6 @@ import javax.swing.*;
 import java.io.*;
 
 public class FileHandling {
-    private String book;
-    private String author;
-    private String borrower;
-    private String affiliation;
-    private String isbn;
-    private String dateBorrowed;
-    private String dueDate;
-
-    public void setBook(String book) {
-        this.book = book;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public void setBorrower(String borrower) {
-        this.borrower = borrower;
-    }
-
-    public void setAffiliation(String affiliation) {
-        this.affiliation = affiliation;
-    }
-
-    public void setIsbn(String isbn) {
-        this.isbn = isbn;
-    }
-
-    public void setDateBorrowed(String dateBorrowed) {
-        this.dateBorrowed = dateBorrowed;
-    }
-
-    public void setDueDate(String dueDate) {
-        this.dueDate = dueDate;
-    }
-
     private static final String PATH = System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Library Borrowing System";
 
 
@@ -65,18 +29,6 @@ public class FileHandling {
             JOptionPane.showMessageDialog(null, "File not found!", "Warning", JOptionPane.WARNING_MESSAGE);
         }
         return attribute;
-    }
-
-    public static void list_files() {
-        File directoryPath = new File(PATH);
-        File[] files_list = directoryPath.listFiles();
-        System.out.println("List of files and directories in the specified directory:");
-        assert files_list != null;
-        for (File file : files_list) {
-            System.out.println("File name: " + file.getName());
-            System.out.println("File path: " + file.getAbsolutePath());
-            System.out.println();
-        }
     }
 
 }

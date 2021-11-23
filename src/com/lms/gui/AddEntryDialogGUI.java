@@ -8,14 +8,15 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.io.File;
 
-class AddNewEntry {
+class AddEntryDialogGUI {
+
+    public AddEntryDialogGUI(){
+        SAVE_BUTTON.addActionListener(e -> saveButtonAction());
+        WINDOW.setSize((int) (get_screen_width() / 2.7), (int) (get_screen_height() / 2.5));
+    }
     private static final JFrame WINDOW = new JFrame("Library Borrowing System | Add New Entry");
     private static final JButton SAVE_BUTTON = new JButton("Save");
     private static final Color CADET_BLUE = Color.decode("#58A4B0");
@@ -29,7 +30,7 @@ class AddNewEntry {
 
     private static final String PATH = System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Library Borrowing System";
 
-    public void newEntryWindow() {
+    public void showUI() {
         JLabel bookLabel = new JLabel("Title of the Book:");
         JLabel authorLabel = new JLabel("Author:");
         JLabel isbnLabel = new JLabel("ISBN");
@@ -58,6 +59,7 @@ class AddNewEntry {
         JLabel title = new JLabel("Add New Entry", JLabel.LEFT);
         title.setFont(new Font("Inter", Font.BOLD, 30));
         title.setForeground(Color.WHITE);
+
         JPanel titleContainer = new JPanel();
         titleContainer.setLayout(new BorderLayout());
         titleContainer.setBackground(CADET_BLUE);
@@ -65,11 +67,7 @@ class AddNewEntry {
         titleContainer.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         titleContainer.add(title, BorderLayout.LINE_START);
 
-        /*
-         * The left panel is the container for the
-         * Title of the Book field, Author,
-         * ISBN, and Date Borrowed fields.
-         * */
+//        Left Side
         JPanel left = new JPanel();
         left.setLayout(new GridLayout(4, 1));
         left.setBackground(Color.white);
@@ -80,11 +78,7 @@ class AddNewEntry {
         left.add(panelFormat(isbnCont, isbnLabel, isbnTextField));
         left.add(panelFormat(dateBorrowedCont, dateBorrowedLabel, dateBorrowedTextField));
 
-        /*
-         * The right panel is the container for the
-         * Borrower Name, Affiliation, and  Due Date fields,
-         * along with the Save button
-         * */
+//        Right Side
         JPanel right = new JPanel(new GridLayout(4, 1));
         right.setBackground(Color.white);
         right.setSize(100, -1);
@@ -92,6 +86,7 @@ class AddNewEntry {
         right.add(panelFormat(borrowerCont, borrowedLabel, borrowerTextField));
         right.add(panelFormat(affiliationCont, affiliationLabel, affiliationTextField));
         right.add(panelFormat(dueDateCont, dueDateLabel, dueDateTextField));
+//        Button
         JPanel saveBtnContainer = new JPanel(new BorderLayout());
         saveBtnContainer.setBackground(Color.white);
         saveBtnContainer.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -101,10 +96,7 @@ class AddNewEntry {
         saveBtnContainer.add(SAVE_BUTTON, BorderLayout.CENTER);
         right.add(saveBtnContainer);
 
-        /*
-         * The inner Cont is the container for
-         * both the left and right Container.
-         * */
+//        Container for left and right container
         JPanel innerCont = new JPanel();
         innerCont.setLayout(new GridLayout(0, 2));
         innerCont.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
@@ -112,68 +104,46 @@ class AddNewEntry {
         innerCont.add(left);
         innerCont.add(right);
 
-        /*
-         * The main Cont is the container for all
-         * the components
-         * */
+//        Container for all components
         JPanel mainCont = new JPanel();
         mainCont.setLayout(new GridLayout());
         mainCont.setOpaque(true);
         mainCont.setBackground(new Color(255, 255, 255, 10));
-
-        /*
-         * Adding attributes to the JFrame/window
-         * */
-        WINDOW.setSize((int) (get_screen_width() / 2.7), (int) (get_screen_height() / 2.5));
-        WINDOW.setContentPane(mainCont);
-        WINDOW.setLayout(new BorderLayout());
         WINDOW.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         WINDOW.setLocationRelativeTo(null);
         WINDOW.setVisible(true);
+        WINDOW.setResizable(false);
+        WINDOW.setContentPane(mainCont);
+        WINDOW.setLayout(new BorderLayout());
         WINDOW.add(titleContainer, BorderLayout.NORTH);
         WINDOW.add(innerCont, BorderLayout.CENTER);
-        WINDOW.setResizable(false);
-
-        /*
-         * Clicking the save button will retrieve the text
-         * from the text fields inserted by the user and
-         * saved as a string.
-         *
-         * If at least one of the fields is empty, it will
-         * show an error dialogue. Else if there are
-         * no errors, it displays a
-         * */
-        SAVE_BUTTON.addActionListener(e -> {
-            var book = get_text(bookTextField);
-            var author = get_text(authorTextField);
-            var isbn = get_text(isbnTextField);
-            var borrower = get_text(borrowerTextField);
-            var affiliation = get_text(affiliationTextField);
-            var dateBorrowed = get_text(dateBorrowedTextField);
-            var dueDate = get_text(dueDateTextField);
-
-            if (isUnfilled()) {
-                JOptionPane.showMessageDialog(WINDOW, "Fields can't be empty!", "Error", JOptionPane.ERROR_MESSAGE);
-            } else {
-                String id = book + "_" + borrower + "_" + dateBorrowed + "_" + dueDate;
-                var file = new CreateFile(PATH + File.separator, id);
-                var updateFile = new UpdateFile(file.getFile());
-                updateFile.writeln(book);
-                updateFile.writeln(author);
-                updateFile.writeln(isbn);
-                updateFile.writeln(borrower);
-                updateFile.writeln(affiliation);
-                updateFile.writeln(dateBorrowed);
-                updateFile.writeln(dueDate);
-                JOptionPane.showMessageDialog(WINDOW, "Entry Saved", "Notification", JOptionPane.PLAIN_MESSAGE);
-                WINDOW.dispose();
-            }
-        });
     }
 
-    public static void main(String[] args) {
-        var entry = new AddNewEntry();
-        entry.newEntryWindow();
+    private void saveButtonAction() {
+        var book = getText(bookTextField);
+        var author = getText(authorTextField);
+        var isbn = getText(isbnTextField);
+        var borrower = getText(borrowerTextField);
+        var affiliation = getText(affiliationTextField);
+        var dateBorrowed = getText(dateBorrowedTextField);
+        var dueDate = getText(dueDateTextField);
+
+        if (isUnfilled()) {
+            JOptionPane.showMessageDialog(WINDOW, "Fields can't be empty!", "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+            String id = book + "_" + borrower + "_" + dateBorrowed + "_" + dueDate;
+            var file = new CreateFile(PATH + File.separator, id);
+            var updateFile = new UpdateFile(file.getFile());
+            updateFile.writeln(book);
+            updateFile.writeln(author);
+            updateFile.writeln(isbn);
+            updateFile.writeln(borrower);
+            updateFile.writeln(affiliation);
+            updateFile.writeln(dateBorrowed);
+            updateFile.writeln(dueDate);
+            JOptionPane.showMessageDialog(WINDOW, "Entry Saved", "Notification", JOptionPane.PLAIN_MESSAGE);
+            WINDOW.dispose();
+        }
     }
 
     public boolean isRunning() {
@@ -188,13 +158,13 @@ class AddNewEntry {
     }
 
     private static boolean isUnfilled() {
-        var bt = get_text(bookTextField);
-        var ad = get_text(authorTextField);
-        var is = get_text(isbnTextField);
-        var bn = get_text(borrowerTextField);
-        var af = get_text(affiliationTextField);
-        var db = get_text(dateBorrowedTextField);
-        var dd = get_text(dueDateTextField);
+        var bt = getText(bookTextField);
+        var ad = getText(authorTextField);
+        var is = getText(isbnTextField);
+        var bn = getText(borrowerTextField);
+        var af = getText(affiliationTextField);
+        var db = getText(dateBorrowedTextField);
+        var dd = getText(dueDateTextField);
         return bt.isEmpty() || ad.isEmpty() || is.isEmpty() || bn.isEmpty() || af.isEmpty() || db.isEmpty() || dd.isEmpty();
     }
 
@@ -219,7 +189,7 @@ class AddNewEntry {
         return tf;
     }
 
-    private static String get_text(JTextField tf) {
+    private static String getText(JTextField tf) {
         return tf.getText().trim();
     }
 

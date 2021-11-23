@@ -1,7 +1,11 @@
 package com.lms.gui;
 
-import javax.swing.*;
-import java.io.*;
+import javax.swing.JOptionPane;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 public class UpdateFile {
     private final File file;
