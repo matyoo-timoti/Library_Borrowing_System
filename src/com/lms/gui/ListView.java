@@ -25,6 +25,8 @@ public class ListView {
     private final JLabel dateBorrowed;
     private final JLabel dueDate;
     private final JCheckBox checkBox;
+    private final JButton editButton = new JButton();
+    private final JButton delButton = new JButton();
 
     ListView(String[] attributes) {
         bookName = new JLabel(attributes[0]);
@@ -34,6 +36,23 @@ public class ListView {
         dateBorrowed = new JLabel(attributes[5]);
         dueDate = new JLabel(attributes[6]);
         checkBox = new JCheckBox("Returned");
+        editButton.addActionListener(e -> edit());
+        delButton.addActionListener(e -> remove());
+    }
+
+    private void remove() {
+//        If the delButton is pressed {
+//          the panel (current), will be deleted/removed
+//          the file that the attributes are referencing to are moved
+//          to another folder (Discarded).
+//        }
+        
+    }
+
+    private void edit() {
+//        If the editButton is pressed {
+//          modify entry window will show.
+//        }
     }
 
     public JPanel showInRows() {
@@ -60,16 +79,14 @@ public class ListView {
         c5.add(checkBox, new GridBagConstraints());
 
         panelFormat(c6);
-        JButton edBtn = new JButton();
-        JButton delBtn = new JButton();
-        edBtn.setBackground(Color.white);
-        delBtn.setBackground(Color.white);
-        buttonFormat(edBtn, edIco);
-        buttonFormat(delBtn, delIco);
+        editButton.setBackground(Color.white);
+        delButton.setBackground(Color.white);
+        buttonFormat(editButton, edIco);
+        buttonFormat(delButton, delIco);
         iconResize(edIco, 40);
-        c6.add(edBtn, new GridBagConstraints());
+        c6.add(editButton, new GridBagConstraints());
         c6.add(createRigidArea(new Dimension(25, 0)));
-        c6.add(delBtn, new GridBagConstraints());
+        c6.add(delButton, new GridBagConstraints());
 
         container.setLayout(new GridLayout(1, 6));
         container.setBackground(Color.white);
@@ -85,16 +102,16 @@ public class ListView {
         return container;
     }
 
+    private static void labelFormat(Component label) {
+        label.setForeground(Color.BLACK);
+        label.setFont(new Font("Inter", Font.BOLD, 18));
+    }
+
     private static void labelFormat(JLabel label1, JLabel label2) {
         label1.setForeground(Color.black);
         label1.setFont(new Font("Inter", Font.BOLD, 18));
         label2.setForeground(Color.black);
         label2.setFont(new Font("Inter", Font.PLAIN, 12));
-    }
-
-    private static void labelFormat(Component label) {
-        label.setForeground(Color.BLACK);
-        label.setFont(new Font("Inter", Font.BOLD, 18));
     }
 
     private static void panelFormat(JPanel panel) {

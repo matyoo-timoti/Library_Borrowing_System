@@ -13,10 +13,6 @@ import java.io.File;
 
 class AddEntryDialogGUI {
 
-    public AddEntryDialogGUI(){
-        SAVE_BUTTON.addActionListener(e -> saveButtonAction());
-        WINDOW.setSize((int) (get_screen_width() / 2.7), (int) (get_screen_height() / 2.5));
-    }
     private static final JFrame WINDOW = new JFrame("Library Borrowing System | Add New Entry");
     private static final JButton SAVE_BUTTON = new JButton("Save");
     private static final Color CADET_BLUE = Color.decode("#58A4B0");
@@ -27,8 +23,17 @@ class AddEntryDialogGUI {
     private static final JTextField borrowerTextField = new JTextField();
     private static final JTextField affiliationTextField = new JTextField();
     private static final JTextField dueDateTextField = new JTextField();
-
     private static final String PATH = System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Library Borrowing System";
+
+    public AddEntryDialogGUI(){
+        SAVE_BUTTON.addActionListener(e -> saveButtonAction());
+        WINDOW.setSize((int) (get_screen_width() / 2.7), (int) (get_screen_height() / 2.5));
+    }
+
+    public void focusable(){
+        WINDOW.setAutoRequestFocus(true);
+        WINDOW.toFront();
+    }
 
     public void showUI() {
         JLabel bookLabel = new JLabel("Title of the Book:");

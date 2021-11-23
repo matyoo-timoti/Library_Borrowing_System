@@ -14,6 +14,7 @@ public class ReadFile {
     FileReader fileReader;
     BufferedReader bufferedReader;
 
+//    Constructor with String parameter for the file path
     public ReadFile(String filePath) {
         file = new File(filePath);
         try {
@@ -25,6 +26,7 @@ public class ReadFile {
         }
     }
 
+//    Constructor with File parameter
     public ReadFile(File file) {
         this.file = file;
         try {
@@ -36,6 +38,7 @@ public class ReadFile {
         }
     }
 
+//    Reads only one line.
     public String readLine() {
         String readLine = null;
         try {
@@ -46,6 +49,7 @@ public class ReadFile {
         return readLine;
     }
 
+//    Reads all lines in the file and returns it in a list.
     public List<String> readFile() {
         List<String> list = new ArrayList<>();
         try {

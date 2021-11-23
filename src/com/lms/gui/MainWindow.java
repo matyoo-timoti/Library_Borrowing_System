@@ -1,9 +1,7 @@
 package com.lms.gui;
 
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -17,19 +15,31 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Image;
 import java.io.File;
 
-import static javax.swing.Box.createRigidArea;
-
 public class MainWindow {
+    private final JFrame mainWindow = new JFrame("Library Borrowing System | By: Matthew Cabarle");
+    private final JButton addNewButton = new JButton("Add New Entry");
+    private final JButton sortButton = new JButton("Sort");
+    private final JPanel topCont = new JPanel();
+    private final JPanel titleCont = new JPanel(new BorderLayout());
+    private final JPanel middleCont = new JPanel();
+    private final JPanel topInsideMiddleCont = new JPanel(new BorderLayout());
+    private final JPanel botInsideMiddleCont = new JPanel(new GridBagLayout());
+    private final JPanel contLabel0 = colName("Book");
+    private final JPanel contLabel1 = colName("Borrower");
+    private final JPanel contLabel2 = colName("Date Borrowed");
+    private final JPanel contLabel3 = colName("Due Date");
+    private final JPanel contLabel4 = colName("Status");
+    private final JPanel contLabel5 = colName("Actions");
+    private final JLabel title = new JLabel("Library Borrowing System");
 
     MainWindow() {
         var addNew = new AddEntryDialogGUI();
-        BTN_ADD_NEW.addActionListener(e -> {
+        addNewButton.addActionListener(e -> {
+            addNew.focusable();
             if (!addNew.isRunning()) {
                 Thread newThread = new Thread(addNew::showUI);
                 newThread.start();
@@ -37,60 +47,42 @@ public class MainWindow {
         });
     }
 
-    private static final JFrame WINDOW = new JFrame("Library Borrowing System | By: Matthew Cabarle");
-    private static final String ICON_PATH = System.getProperty("user.dir") + File.separator + "icons";
-    private static final JButton BTN_ADD_NEW = new JButton("Add New Entry");
-    private static final JButton BTN_SORT = new JButton("Sort");
-
     public static void main(String[] args) {
         var main = new MainWindow();
         main.mainWindow();
     }
 
     public void mainWindow() {
-        JPanel topCont = new JPanel();
         topCont.setLayout(new BoxLayout(topCont, BoxLayout.Y_AXIS));
-
-        JPanel titleCont = new JPanel(new BorderLayout());
+//        container for the title
+        labelFormat(title, Color.white, 45);
         titleCont.setBorder(new EmptyBorder(20, 20, 20, 20));
         titleCont.setBackground(new Color(43, 48, 58));
-
-        JLabel title = new JLabel("Library Borrowing System");
-        labelFormat(title, Color.white, 45);
         titleCont.add(title, BorderLayout.LINE_START);
         topCont.add(titleCont);
 
-        JPanel middleCont = new JPanel();
+//        Container for the add and sort buttons
         middleCont.setLayout(new BoxLayout(middleCont, BoxLayout.Y_AXIS));
+        addNewButton.setBackground(Color.decode("#58A4B0"));
+        addNewButton.setForeground(Color.white);
+        addNewButton.setFont(new Font("Inter", Font.BOLD, 18));
 
-        BTN_ADD_NEW.setBackground(Color.decode("#58A4B0"));
-        BTN_ADD_NEW.setForeground(Color.white);
-        BTN_ADD_NEW.setFont(new Font("Inter", Font.BOLD, 18));
+        topInsideMiddleCont.setBorder(new EmptyBorder(10, 15, 10, 15));
+        topInsideMiddleCont.add(addNewButton, BorderLayout.LINE_START);
+        topInsideMiddleCont.add(sortButton, BorderLayout.LINE_END);
+        middleCont.add(topInsideMiddleCont);
 
-        JPanel insideMiddleTop = new JPanel(new BorderLayout());
-        insideMiddleTop.setBorder(new EmptyBorder(10, 15, 10, 15));
-        insideMiddleTop.add(BTN_ADD_NEW, BorderLayout.LINE_START);
-        insideMiddleTop.add(BTN_SORT, BorderLayout.LINE_END);
+        botInsideMiddleCont.setLayout(new GridLayout(0, 6));
+        botInsideMiddleCont.setBorder(new EmptyBorder(0, 11, 0, 8));
+        botInsideMiddleCont.setBackground(Color.WHITE);
+        botInsideMiddleCont.add(contLabel0);
+        botInsideMiddleCont.add(contLabel1);
+        botInsideMiddleCont.add(contLabel2);
+        botInsideMiddleCont.add(contLabel3);
+        botInsideMiddleCont.add(contLabel4);
+        botInsideMiddleCont.add(contLabel5);
+        middleCont.add(botInsideMiddleCont);
 
-        JPanel insideMiddleBot = new JPanel(new GridBagLayout());
-        insideMiddleBot.setLayout(new GridLayout(0, 6));
-        insideMiddleBot.setBorder(new EmptyBorder(0, 11, 0, 8));
-        insideMiddleBot.setBackground(Color.WHITE);
-
-        JPanel contLabel0 = colName("Book");
-        JPanel contLabel1 = colName("Borrower");
-        JPanel contLabel2 = colName("Date Borrowed");
-        JPanel contLabel3 = colName("Due Date");
-        JPanel contLabel4 = colName("Status");
-        JPanel contLabel5 = colName("Actions");
-        insideMiddleBot.add(contLabel0);
-        insideMiddleBot.add(contLabel1);
-        insideMiddleBot.add(contLabel2);
-        insideMiddleBot.add(contLabel3);
-        insideMiddleBot.add(contLabel4);
-        insideMiddleBot.add(contLabel5);
-        middleCont.add(insideMiddleTop);
-        middleCont.add(insideMiddleBot);
         topCont.add(middleCont);
 
         var traverse = new TraverseFolder(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Library Borrowing System");
@@ -118,14 +110,14 @@ public class MainWindow {
         JScrollPane scrollPane = new JScrollPane(contRows);
         customScrollPane(scrollPane);
 
-        WINDOW.setLayout(new BorderLayout());
-        WINDOW.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        WINDOW.add(topCont, BorderLayout.NORTH);
-        WINDOW.add(scrollPane, BorderLayout.CENTER);
-        WINDOW.setMinimumSize(new Dimension(1000, 500));
-        WINDOW.setSize(900, 500);
-        WINDOW.setVisible(true);
-        WINDOW.setLocationRelativeTo(null);
+        mainWindow.setLayout(new BorderLayout());
+        mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainWindow.add(topCont, BorderLayout.NORTH);
+        mainWindow.add(scrollPane, BorderLayout.CENTER);
+        mainWindow.setMinimumSize(new Dimension(1000, 500));
+        mainWindow.setSize(900, 500);
+        mainWindow.setVisible(true);
+        mainWindow.setLocationRelativeTo(null);
     }
 
     private static void labelFormat(Component label, Color fontColor, int fontSize) {

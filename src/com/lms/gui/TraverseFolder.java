@@ -13,5 +13,4 @@ public class TraverseFolder {
         File directoryPath = new File(folderPath);
         files = directoryPath.listFiles();
     }
-
 }

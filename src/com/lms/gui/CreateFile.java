@@ -9,14 +9,19 @@ public class CreateFile {
     private File file;
     private final String folderPath;
 
+//    Returns the path of the folder
     public String getFolderPath() {
         return folderPath;
     }
 
+//    Returns the file created
     public File getFile() {
         return file;
     }
 
+//    Constructor with parameters:
+//    String path - for the directory/path to the folder;
+//    String fileName - for the name of the file to be created.
     public CreateFile(String path, String fileName) {
         this.folderPath = path;
         File folder = new File(folderPath);
