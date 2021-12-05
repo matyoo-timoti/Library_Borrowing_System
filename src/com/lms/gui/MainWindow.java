@@ -102,7 +102,6 @@ public class MainWindow {
             cl.show(card, (String) evt.getItem());
         });
 
-
         var t = new Thread(() -> {
             while (true) {
                 try {
@@ -132,42 +131,6 @@ public class MainWindow {
             }
         });
         t.start();
-//        Thread t2 = new Thread(() -> {
-//            do {
-//                try {
-//                    WatchService watcher = pathUnreturned.getFileSystem().newWatchService();
-//                    pathUnreturned.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
-//                    WatchKey watchKey = watcher.take();
-//                    List<WatchEvent<?>> events = watchKey.pollEvents();
-//                    for (var event : events) {
-//                        if (event.kind() == StandardWatchEventKinds.ENTRY_CREATE ||
-//                                event.kind() == StandardWatchEventKinds.ENTRY_MODIFY ||
-//                                event.kind() == StandardWatchEventKinds.ENTRY_DELETE) {
-//                            scrollPane.removeAll();
-//                            createScrollPane();
-//                            scrollPane.refresh();
-//                        }
-//                    }
-//                    watchKey.reset();
-//                } catch (IOException | InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            } while (true);
-//        });
-//        t2.start();
-//        sortOptions.addActionListener(e -> {
-//            var selected = (String) sortOptions.getSelectedItem();
-//            if (selected != null && selected.equals("Unreturned")) {
-//                mainWindow.add(unreturnedScrollPane.getScrollPane(), BorderLayout.CENTER);
-//                mainWindow.invalidate();
-//                mainWindow.validate();
-//            }
-//            if (selected != null && selected.equals("Returned")) {
-//                mainWindow.add(returnedScrollPane.getScrollPane(), BorderLayout.CENTER);
-//                mainWindow.invalidate();
-//                mainWindow.validate();
-//            }
-//        });
 
         mainWindow.setLayout(new BorderLayout());
         mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

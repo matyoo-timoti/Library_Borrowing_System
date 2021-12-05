@@ -11,8 +11,8 @@ public class ScrollPane {
     private final JScrollPane scrollPane;
 
     ScrollPane() {
-        contRows.setLayout(new BoxLayout(contRows, BoxLayout.Y_AXIS));
         UIManager.put("ScrollBar.width", ((int) UIManager.get("ScrollBar.width") - 10));
+        contRows.setLayout(new BoxLayout(contRows, BoxLayout.Y_AXIS));
         scrollPane = new JScrollPane(contRows);
         scrollPane.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.DARK_GRAY));
         customScrollBar(scrollPane);
