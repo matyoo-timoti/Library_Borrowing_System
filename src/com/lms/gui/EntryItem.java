@@ -12,6 +12,7 @@ public class EntryItem{
     private String isbn;
     private String dateBorrowed;
     private String dueDate;
+    private boolean isReturned;
 
     public EntryItem(File file) {
         var read = new ReadFile(file);
@@ -23,6 +24,7 @@ public class EntryItem{
         setAffiliation(read.readLine());
         setDateBorrowed(read.readLine());
         setDueDate(read.readLine());
+        setReturned(Boolean.parseBoolean(read.readLine()));
         try {
             read.bufferedReader.close();
         } catch (IOException e) {
@@ -92,5 +94,13 @@ public class EntryItem{
 
     public void setDueDate(String dueDate) {
         this.dueDate = dueDate;
+    }
+
+    public boolean isReturned() {
+        return isReturned;
+    }
+
+    public void setReturned(boolean returned) {
+        isReturned = returned;
     }
 }

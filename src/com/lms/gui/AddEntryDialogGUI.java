@@ -1,7 +1,6 @@
 package com.lms.gui;
 
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.io.File;
 import java.nio.file.Path;
@@ -142,6 +141,7 @@ class AddEntryDialogGUI {
             updateFile.writeln(affiliation);
             updateFile.writeln(dateBorrowed);
             updateFile.writeln(dueDate);
+            updateFile.write("false");
             JOptionPane.showMessageDialog(window, "Entry Saved", "Notification", JOptionPane.PLAIN_MESSAGE);
             window.dispose();
         }
@@ -185,8 +185,8 @@ class AddEntryDialogGUI {
 
     private static JTextField textFieldFormat(JTextField tf) {
         tf.setFont(new Font("Inter Medium", Font.PLAIN, 15));
-        tf.setBackground(new Color(248, 248, 248)); // default 248,248,248
-        tf.setBorder(new LineBorder(Color.LIGHT_GRAY)); //default 255,255,255
+        tf.setBackground(new Color(245, 245, 245)); // default 248,248,248
+//        tf.setBorder(new LineBorder(Color.LIGHT_GRAY)); //default 255,255,255
         return tf;
     }
 

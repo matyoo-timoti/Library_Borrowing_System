@@ -2,26 +2,20 @@ package com.lms.gui;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class MainWindow {
     private final JFrame mainWindow = new JFrame("Library Borrowing System | By: Matthew Cabarle");
     private final JButton addNewButton = new JButton("Add New Entry");
-    private final JButton sortButton = new JButton("Sort");
     private final JLabel title = new JLabel("Library Borrowing System");
-    private final ScrollPane scrollPane = new ScrollPane();
-    private static final Path path = Path.of(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Library Borrowing System" + File.separator + "Unreturned");
+    private final Path pathUnreturned = Path.of(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Library Borrowing System" + File.separator + "Unreturned");
+    private final Path pathReturned = Path.of(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Library Borrowing System" + File.separator + "Returned");
 
     MainWindow() {
         addNewButton.addActionListener(e -> {
@@ -64,16 +58,21 @@ public class MainWindow {
         addNewButton.setForeground(Color.white);
         addNewButton.setFont(new Font("Inter", Font.BOLD, 18));
         addNewButton.setBorder(new EmptyBorder(10, 10, 10, 10));
-        sortButton.setBackground(Color.decode("#58A4B0"));
-        sortButton.setForeground(Color.white);
-        sortButton.setFont(new Font("Inter", Font.BOLD, 18));
-        sortButton.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        var unreturned ="Unreturned";
+        var returned = "Returned";
+        String[] options = {unreturned, returned};
+        var sortOptions = new JComboBox<>(options);
+        sortOptions.setFont(new Font("Inter", Font.BOLD, 18));
+        sortOptions.setEditable(false);
+        sortOptions.setBackground(Color.decode("#58A4B0"));
+        sortOptions.setForeground(Color.WHITE);
 
 //        Container for the add and sort buttons
         middleCont.setLayout(new BoxLayout(middleCont, BoxLayout.Y_AXIS));
         topInsideMiddleCont.setBorder(new EmptyBorder(10, 30, 10, 30));
         topInsideMiddleCont.add(addNewButton, BorderLayout.LINE_START);
-        topInsideMiddleCont.add(sortButton, BorderLayout.LINE_END);
+        topInsideMiddleCont.add(sortOptions, BorderLayout.LINE_END);
         middleCont.add(topInsideMiddleCont);
 
         botInsideMiddleCont.setLayout(new GridLayout(0, 6));
@@ -88,50 +87,112 @@ public class MainWindow {
         middleCont.add(botInsideMiddleCont);
         topCont.add(middleCont);
 
-        Thread t2 = new Thread(() -> {
-            do {
+        var returnedScrollPane = new ScrollPane();
+        createScrollPane(pathReturned, returnedScrollPane);
+        var unreturnedScrollPane = new ScrollPane();
+        createScrollPane(pathUnreturned, unreturnedScrollPane);
+
+//        Card Layout for changing panels
+        var card = new JPanel(new CardLayout());
+        card.add(unreturnedScrollPane.getScrollPane(), unreturned);
+        card.add(returnedScrollPane.getScrollPane(), returned);
+
+        sortOptions.addItemListener(evt -> {
+            CardLayout cl = (CardLayout) (card.getLayout());
+            cl.show(card, (String) evt.getItem());
+        });
+
+
+        var t = new Thread(() -> {
+            while (true) {
                 try {
-                    WatchService watcher = path.getFileSystem().newWatchService();
-                    path.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
-                    WatchKey watchKey = watcher.take();
+                    var watchService = FileSystems.getDefault().newWatchService();
+                    pathUnreturned.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
+                    pathReturned.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
+                    WatchKey watchKey = watchService.take();
                     List<WatchEvent<?>> events = watchKey.pollEvents();
                     for (var event : events) {
-                        if (event.kind() == StandardWatchEventKinds.ENTRY_CREATE || event.kind() == StandardWatchEventKinds.ENTRY_MODIFY || event.kind() == StandardWatchEventKinds.ENTRY_DELETE) {
-                            scrollPane.removeAll();
-                            scrollPane();
-                            scrollPane.refresh();
+                        if (event.kind() == StandardWatchEventKinds.ENTRY_CREATE ||
+                                event.kind() == StandardWatchEventKinds.ENTRY_MODIFY ||
+                                event.kind() == StandardWatchEventKinds.ENTRY_DELETE) {
+                            unreturnedScrollPane.removeAll();
+                            returnedScrollPane.removeAll();
+
+                            createScrollPane(pathUnreturned, unreturnedScrollPane);
+                            createScrollPane(pathReturned, returnedScrollPane);
+
+                            unreturnedScrollPane.refresh();
+                            returnedScrollPane.refresh();
                         }
                     }
                     watchKey.reset();
                 } catch (IOException | InterruptedException e) {
                     e.printStackTrace();
                 }
-            } while (true);
+            }
         });
-        t2.start();
+        t.start();
+//        Thread t2 = new Thread(() -> {
+//            do {
+//                try {
+//                    WatchService watcher = pathUnreturned.getFileSystem().newWatchService();
+//                    pathUnreturned.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
+//                    WatchKey watchKey = watcher.take();
+//                    List<WatchEvent<?>> events = watchKey.pollEvents();
+//                    for (var event : events) {
+//                        if (event.kind() == StandardWatchEventKinds.ENTRY_CREATE ||
+//                                event.kind() == StandardWatchEventKinds.ENTRY_MODIFY ||
+//                                event.kind() == StandardWatchEventKinds.ENTRY_DELETE) {
+//                            scrollPane.removeAll();
+//                            createScrollPane();
+//                            scrollPane.refresh();
+//                        }
+//                    }
+//                    watchKey.reset();
+//                } catch (IOException | InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            } while (true);
+//        });
+//        t2.start();
+//        sortOptions.addActionListener(e -> {
+//            var selected = (String) sortOptions.getSelectedItem();
+//            if (selected != null && selected.equals("Unreturned")) {
+//                mainWindow.add(unreturnedScrollPane.getScrollPane(), BorderLayout.CENTER);
+//                mainWindow.invalidate();
+//                mainWindow.validate();
+//            }
+//            if (selected != null && selected.equals("Returned")) {
+//                mainWindow.add(returnedScrollPane.getScrollPane(), BorderLayout.CENTER);
+//                mainWindow.invalidate();
+//                mainWindow.validate();
+//            }
+//        });
 
-        scrollPane();
         mainWindow.setLayout(new BorderLayout());
         mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainWindow.add(card, BorderLayout.CENTER);
         mainWindow.add(topCont, BorderLayout.NORTH);
         mainWindow.setMinimumSize(new Dimension(1000, 500));
         mainWindow.setSize(900, 500);
         mainWindow.setVisible(true);
         mainWindow.setLocationRelativeTo(null);
-        mainWindow.add(scrollPane.getScrollPane(), BorderLayout.CENTER);
 
     }
 
-    private void scrollPane() {
-        var traverse = new TraverseFolder(path.toString());
+    private void createScrollPane(Path entryFolder, ScrollPane scrollPane) {
+        var traverse = new TraverseFolder(entryFolder.toString());
         ArrayList<Row> list = new ArrayList<>();
         for (File file : traverse.getFiles()) {
             list.add(new Row(file));
         }
+        if (list.isEmpty()) {
+            return;
+        }
+        list.sort(Comparator.comparing(Row::getBookName));
         for (var li : list) {
             scrollPane.add(li.showGUI());
         }
-//        scrollPane.add(new JToolBar.Separator(new Dimension(0, 3)));
     }
 
     private static void labelFormat(Component label, Color fontColor, int fontSize) {

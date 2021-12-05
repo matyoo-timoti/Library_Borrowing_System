@@ -1,10 +1,6 @@
 package com.lms.gui;
 
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.Color;
 import java.awt.Component;
@@ -18,7 +14,8 @@ public class ScrollPane {
         contRows.setLayout(new BoxLayout(contRows, BoxLayout.Y_AXIS));
         UIManager.put("ScrollBar.width", ((int) UIManager.get("ScrollBar.width") - 10));
         scrollPane = new JScrollPane(contRows);
-        customScrollPane(scrollPane);
+        scrollPane.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.DARK_GRAY));
+        customScrollBar(scrollPane);
     }
 
     public void add(Component component) {
@@ -38,7 +35,7 @@ public class ScrollPane {
         contRows.removeAll();
     }
 
-    private static void customScrollPane(JScrollPane scroll_pane) {
+    private static void customScrollBar(JScrollPane scroll_pane) {
         scroll_pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scroll_pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scroll_pane.getVerticalScrollBar().setUnitIncrement(10);//10 is default
@@ -65,7 +62,7 @@ public class ScrollPane {
             }
 
             protected void configureScrollBarColors() {
-                this.thumbColor = new Color(225, 225, 225);
+                this.thumbColor = Color.LIGHT_GRAY;
             }
         });
         scroll_pane.getHorizontalScrollBar().setUI(new BasicScrollBarUI() {
@@ -88,7 +85,7 @@ public class ScrollPane {
             }
 
             protected void configureScrollBarColors() {
-                this.thumbColor = new Color(225, 225, 225);
+                this.thumbColor = Color.LIGHT_GRAY;
             }
         });
     }

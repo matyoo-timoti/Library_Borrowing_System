@@ -1,11 +1,6 @@
 package com.lms.gui;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -26,30 +21,76 @@ import static javax.swing.Box.createRigidArea;
 
 public class Row {
     private final String iconDirectory = System.getProperty("user.dir") + File.separator + "icons";
-    //    private static final Path pathUnreturned = Path.of(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Library Borrowing System" + File.separator + "Unreturned");
     private static final Path pathDiscarded = Path.of(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Library Borrowing System" + File.separator + "Discarded");
+    private static final Path pathReturned = Path.of(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Library Borrowing System" + File.separator + "Returned");
+    private static final Path pathUnreturned = Path.of(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Library Borrowing System" + File.separator + "Unreturned");
     private final EntryItem entryItem;
     private final JPanel container = new JPanel();
     private final JButton editButton = new JButton();
     private final JButton delButton = new JButton();
+    private final JCheckBox checkBox = new JCheckBox("Returned");
+    private final String bookName;
 
     Row(File file) {
         entryItem = new EntryItem(file);
+        bookName = entryItem.getBook();
+        checkBox.setSelected(entryItem.isReturned());
         delButton.addActionListener(e -> remove());
         var mod = new ModifyEntryGUI(entryItem);
         editButton.addActionListener(e -> {
+            if (!mod.isRunning()) {
+                mod.showUI();
+            }
             mod.focusable();
-            mod.showUI();
+        });
+        checkBox.addActionListener(e -> {
+            entryItem.setReturned(checkBox.isSelected());
+            moveToFolder();
         });
     }
 
+    private void moveToFolder() {
+//           Move file to the "Returned" folder if checkbox is checked.
+        var returnedPath = pathReturned + File.separator + entryItem.getFile().getName();
+        if (entryItem.isReturned()) {
+            if (!Files.exists(Path.of(returnedPath))) {
+                try {
+                    File folder = new File(pathReturned.toString());
+                    if (folder.exists() || folder.mkdirs()) {
+                        Files.move(Path.of(entryItem.getFile().getAbsolutePath()), Path.of(pathReturned + File.separator + entryItem.getFile().getName()), StandardCopyOption.ATOMIC_MOVE);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "ERROR: Folder does not exist.", "Error", JOptionPane.ERROR_MESSAGE);
+                        System.out.println("Folder Not created");
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        var unreturnedPath = pathUnreturned + File.separator + entryItem.getFile().getName();
+        if (!entryItem.isReturned()) {
+            if (!Files.exists(Path.of(unreturnedPath))) {
+                try {
+                    File folder = new File(pathUnreturned.toString());
+                    if (folder.exists() || folder.mkdirs()) {
+                        Files.move(Path.of(entryItem.getFile().getAbsolutePath()), Path.of(pathUnreturned + File.separator + entryItem.getFile().getName()), StandardCopyOption.ATOMIC_MOVE);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "ERROR: Folder does not exist.", "Error", JOptionPane.ERROR_MESSAGE);
+                        System.out.println("Folder Not created");
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     private void remove() {
-//        We won't delete the file, instead we will move it to another folder called 'Discarded'.
+//        Doesn't delete the file, instead moves it to another folder called 'Discarded'.
         try {
             File folder = new File(pathDiscarded.toString());
             if (folder.exists() || folder.mkdirs()) {
                 Files.move(Path.of(entryItem.getFile().getAbsolutePath()), Path.of(pathDiscarded + File.separator + entryItem.getFile().getName()), StandardCopyOption.ATOMIC_MOVE);
-                container.setVisible(false);
             } else {
                 JOptionPane.showMessageDialog(null, "ERROR: Folder does not exist.", "Error", JOptionPane.ERROR_MESSAGE);
                 System.out.println("Folder Not created");
@@ -66,7 +107,6 @@ public class Row {
         JLabel affiliationLabel = new JLabel(entryItem.getAffiliation());
         JLabel dateBorrowedLabel = new JLabel(entryItem.getDateBorrowed());
         JLabel dueDateLabel = new JLabel(entryItem.getDueDate());
-        JCheckBox checkBox = new JCheckBox("Returned");
 
         JPanel c1 = new JPanel(new BorderLayout());
         JPanel c2 = new JPanel(new BorderLayout());
@@ -109,18 +149,21 @@ public class Row {
         c6.add(createRigidArea(new Dimension(25, 0)));
         c6.add(delButton, new GridBagConstraints());
 
+        var lineBottomPanel = new JPanel(new GridLayout(1, 1));
+        lineBottomPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.lightGray));
         container.setLayout(new GridLayout(1, 6));
         container.setBackground(Color.white);
         container.setBorder(new EmptyBorder(0, 10, 0, 0));
-        container.setPreferredSize(new Dimension(700, 60));
-        container.setMaximumSize(new Dimension(2000, 70));
         container.add(c1);
         container.add(c2);
         container.add(c3);
         container.add(c4);
         container.add(c5);
         container.add(c6);
-        return container;
+        lineBottomPanel.add(container);
+        lineBottomPanel.setPreferredSize(new Dimension(700, 60));
+        lineBottomPanel.setMaximumSize(new Dimension(2000, 70));
+        return lineBottomPanel;
     }
 
     private static void labelFormat(Component label) {
@@ -150,5 +193,9 @@ public class Row {
         Image img = icon.getImage();
         Image newImg = img.getScaledInstance(size, size, Image.SCALE_SMOOTH);
         return new ImageIcon(newImg);
+    }
+
+    public String getBookName() {
+        return bookName;
     }
 }
