@@ -23,7 +23,7 @@ public class UpdateFile {
              BufferedWriter bw = new BufferedWriter(fw);
              PrintWriter out = new PrintWriter(bw)) {
             out.print(text);
-            System.out.println("File is updated.");
+            System.out.println("Write operation complete.");
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "An Error Occurred");
             System.out.println("ERROR: Cannot write in file.");
@@ -36,7 +36,7 @@ public class UpdateFile {
              BufferedWriter bw = new BufferedWriter(fw);
              PrintWriter out = new PrintWriter(bw)) {
             out.println(text);
-            System.out.println("File is updated.");
+            System.out.println("Write line operation complete.");
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "An Error Occurred");
             System.out.println("ERROR: Cannot write in file.");
@@ -49,7 +49,7 @@ public class UpdateFile {
              BufferedWriter bw = new BufferedWriter(fw);
              PrintWriter out = new PrintWriter(bw)) {
             out.print("");
-            System.out.println("File is updated.");
+            System.out.println("File content cleared.");
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "There are similar entry in the system.", "Error", JOptionPane.ERROR_MESSAGE);
             System.out.println("ERROR: Cannot write in file.");

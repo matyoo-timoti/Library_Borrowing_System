@@ -1,15 +1,7 @@
 package com.lms.gui;
 
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JToolBar;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -18,41 +10,47 @@ import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainWindow {
     private final JFrame mainWindow = new JFrame("Library Borrowing System | By: Matthew Cabarle");
     private final JButton addNewButton = new JButton("Add New Entry");
     private final JButton sortButton = new JButton("Sort");
-    private final JPanel topCont = new JPanel();
-    private final JPanel titleCont = new JPanel(new BorderLayout());
-    private final JPanel middleCont = new JPanel();
-    private final JPanel topInsideMiddleCont = new JPanel(new BorderLayout());
-    private final JPanel botInsideMiddleCont = new JPanel(new GridBagLayout());
-    private final JPanel contLabel0 = colName("Book");
-    private final JPanel contLabel1 = colName("Borrower");
-    private final JPanel contLabel2 = colName("Date Borrowed");
-    private final JPanel contLabel3 = colName("Due Date");
-    private final JPanel contLabel4 = colName("Status");
-    private final JPanel contLabel5 = colName("Actions");
     private final JLabel title = new JLabel("Library Borrowing System");
+    private final ScrollPane scrollPane = new ScrollPane();
+    private static final Path path = Path.of(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Library Borrowing System" + File.separator + "Unreturned");
 
     MainWindow() {
-        var addNew = new AddEntryDialogGUI();
         addNewButton.addActionListener(e -> {
-            addNew.focusable();
+            var addNew = new AddEntryDialogGUI();
             if (!addNew.isRunning()) {
-                Thread newThread = new Thread(addNew::showUI);
-                newThread.start();
+                addNew.showUI();
             }
+            addNew.focusable();
         });
     }
 
     public static void main(String[] args) {
         var main = new MainWindow();
-        main.mainWindow();
+        main.showUI();
     }
 
-    public void mainWindow() {
+    public void showUI() {
+        JPanel topCont = new JPanel();
+        JPanel titleCont = new JPanel(new BorderLayout());
+        JPanel middleCont = new JPanel();
+        JPanel topInsideMiddleCont = new JPanel(new BorderLayout());
+        JPanel botInsideMiddleCont = new JPanel(new GridBagLayout());
+        JPanel contLabel0 = colName("Book");
+        JPanel contLabel1 = colName("Borrower");
+        JPanel contLabel2 = colName("Date Borrowed");
+        JPanel contLabel3 = colName("Due Date");
+        JPanel contLabel4 = colName("Status");
+        JPanel contLabel5 = colName("Actions");
+
         topCont.setLayout(new BoxLayout(topCont, BoxLayout.Y_AXIS));
 //        container for the title
         labelFormat(title, Color.white, 45);
@@ -61,13 +59,19 @@ public class MainWindow {
         titleCont.add(title, BorderLayout.LINE_START);
         topCont.add(titleCont);
 
-//        Container for the add and sort buttons
-        middleCont.setLayout(new BoxLayout(middleCont, BoxLayout.Y_AXIS));
+//        Button look
         addNewButton.setBackground(Color.decode("#58A4B0"));
         addNewButton.setForeground(Color.white);
         addNewButton.setFont(new Font("Inter", Font.BOLD, 18));
+        addNewButton.setBorder(new EmptyBorder(10, 10, 10, 10));
+        sortButton.setBackground(Color.decode("#58A4B0"));
+        sortButton.setForeground(Color.white);
+        sortButton.setFont(new Font("Inter", Font.BOLD, 18));
+        sortButton.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        topInsideMiddleCont.setBorder(new EmptyBorder(10, 15, 10, 15));
+//        Container for the add and sort buttons
+        middleCont.setLayout(new BoxLayout(middleCont, BoxLayout.Y_AXIS));
+        topInsideMiddleCont.setBorder(new EmptyBorder(10, 30, 10, 30));
         topInsideMiddleCont.add(addNewButton, BorderLayout.LINE_START);
         topInsideMiddleCont.add(sortButton, BorderLayout.LINE_END);
         middleCont.add(topInsideMiddleCont);
@@ -82,42 +86,52 @@ public class MainWindow {
         botInsideMiddleCont.add(contLabel4);
         botInsideMiddleCont.add(contLabel5);
         middleCont.add(botInsideMiddleCont);
-
         topCont.add(middleCont);
 
-        var traverse = new TraverseFolder(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Library Borrowing System");
+        Thread t2 = new Thread(() -> {
+            do {
+                try {
+                    WatchService watcher = path.getFileSystem().newWatchService();
+                    path.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
+                    WatchKey watchKey = watcher.take();
+                    List<WatchEvent<?>> events = watchKey.pollEvents();
+                    for (var event : events) {
+                        if (event.kind() == StandardWatchEventKinds.ENTRY_CREATE || event.kind() == StandardWatchEventKinds.ENTRY_MODIFY || event.kind() == StandardWatchEventKinds.ENTRY_DELETE) {
+                            scrollPane.removeAll();
+                            scrollPane();
+                            scrollPane.refresh();
+                        }
+                    }
+                    watchKey.reset();
+                } catch (IOException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } while (true);
+        });
+        t2.start();
 
-        JPanel contRows = new JPanel();
-        contRows.setLayout(new BoxLayout(contRows, BoxLayout.Y_AXIS));
-
-        for (File file : traverse.getFiles()) {
-            var read = new ReadFile(file);
-            String[] contents = {
-                    read.readLine(),
-                    read.readLine(),
-                    read.readLine(),
-                    read.readLine(),
-                    read.readLine(),
-                    read.readLine(),
-                    read.readLine(),
-            };
-            var listView = new ListView(contents);
-            contRows.add(listView.showInRows());
-            contRows.add(new JToolBar.Separator(new Dimension(0, 3)));
-        }
-
-        UIManager.put("ScrollBar.width", ((int) UIManager.get("ScrollBar.width") - 10));
-        JScrollPane scrollPane = new JScrollPane(contRows);
-        customScrollPane(scrollPane);
-
+        scrollPane();
         mainWindow.setLayout(new BorderLayout());
         mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainWindow.add(topCont, BorderLayout.NORTH);
-        mainWindow.add(scrollPane, BorderLayout.CENTER);
         mainWindow.setMinimumSize(new Dimension(1000, 500));
         mainWindow.setSize(900, 500);
         mainWindow.setVisible(true);
         mainWindow.setLocationRelativeTo(null);
+        mainWindow.add(scrollPane.getScrollPane(), BorderLayout.CENTER);
+
+    }
+
+    private void scrollPane() {
+        var traverse = new TraverseFolder(path.toString());
+        ArrayList<Row> list = new ArrayList<>();
+        for (File file : traverse.getFiles()) {
+            list.add(new Row(file));
+        }
+        for (var li : list) {
+            scrollPane.add(li.showGUI());
+        }
+//        scrollPane.add(new JToolBar.Separator(new Dimension(0, 3)));
     }
 
     private static void labelFormat(Component label, Color fontColor, int fontSize) {
@@ -128,62 +142,6 @@ public class MainWindow {
     private static void panelFormat(JPanel panel) {
         panel.setBorder(new EmptyBorder(10, 20, 10, 20));
         panel.setBackground(Color.white);
-    }
-
-    private static void customScrollPane(JScrollPane scroll_pane) {
-        scroll_pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scroll_pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scroll_pane.getVerticalScrollBar().setUnitIncrement(10);//10 is default
-        scroll_pane.getHorizontalScrollBar().setUnitIncrement(10);//10 is default
-        scroll_pane.getVerticalScrollBar().setBackground(new Color(240, 240, 240));
-        scroll_pane.getHorizontalScrollBar().setBackground(new Color(240, 240, 240));
-        scroll_pane.getVerticalScrollBar().setUI(new BasicScrollBarUI() {
-            @Override
-            protected JButton createDecreaseButton(int orientation) {
-                return createZeroButton();
-            }
-
-            @Override
-            protected JButton createIncreaseButton(int orientation) {
-                return createZeroButton();
-            }
-
-            private JButton createZeroButton() {
-                JButton jbutton = new JButton();
-                jbutton.setPreferredSize(new Dimension(0, 0));
-                jbutton.setMinimumSize(new Dimension(0, 0));
-                jbutton.setMaximumSize(new Dimension(0, 0));
-                return jbutton;
-            }
-
-            protected void configureScrollBarColors() {
-                this.thumbColor = new Color(225, 225, 225);
-            }
-        });
-        scroll_pane.getHorizontalScrollBar().setUI(new BasicScrollBarUI() {
-            @Override
-            protected JButton createDecreaseButton(int orientation) {
-                return createZeroButton();
-            }
-
-            @Override
-            protected JButton createIncreaseButton(int orientation) {
-                return createZeroButton();
-            }
-
-            private JButton createZeroButton() {
-                JButton jbutton = new JButton();
-                jbutton.setPreferredSize(new Dimension(0, 0));
-                jbutton.setMinimumSize(new Dimension(0, 0));
-                jbutton.setMaximumSize(new Dimension(0, 0));
-                return jbutton;
-            }
-
-            protected void configureScrollBarColors() {
-                this.thumbColor = new Color(225, 225, 225);
-            }
-        });
-
     }
 
     private static JPanel colName(String text) {

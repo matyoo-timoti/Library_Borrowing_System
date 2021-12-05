@@ -1,26 +1,28 @@
 package com.lms.gui;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
-import java.awt.*;
-import java.io.File;
-import java.nio.file.Path;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.Toolkit;
 
-class AddEntryDialogGUI {
-    private final JFrame window = new JFrame("Library Borrowing System | Add New Entry");
-    private final JButton saveBtn = new JButton("Save");
-    private final Color CADET_BLUE = Color.decode("#58A4B0");
-    private final JTextField bookTextField = new JTextField();
-    private final JTextField authorTextField = new JTextField();
-    private final JTextField isbnTextField = new JTextField();
-    private final JTextField dateBorrowedTextField = new JTextField();
-    private final JTextField borrowerTextField = new JTextField();
-    private final JTextField affiliationTextField = new JTextField();
-    private final JTextField dueDateTextField = new JTextField();
-    private final Path PATH = Path.of(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Library Borrowing System" + File.separator + "Unreturned");
+public class ModifyEntryGUI {
 
-    public AddEntryDialogGUI() {
-        saveBtn.addActionListener(e -> saveButtonAction());
+    private static final JFrame window = new JFrame("Library Borrowing System | Add New Entry");
+    private static final JButton saveBtn = new JButton("Save");
+    private static final Color CADET_BLUE = Color.decode("#58A4B0");
+    private final EntryItem entryItem;
+
+    public ModifyEntryGUI(EntryItem entry) {
+        entryItem = entry;
         window.setSize((int) (get_screen_width() / 2.7), (int) (get_screen_height() / 2.5));
     }
 
@@ -46,7 +48,15 @@ class AddEntryDialogGUI {
         JPanel affiliationCont = new JPanel(new GridLayout(2, 1));
         JPanel dueDateCont = new JPanel(new GridLayout(2, 1));
 
-//        Placeholder
+        JTextField bookTextField = new JTextField(entryItem.getBook());
+        JTextField authorTextField = new JTextField(entryItem.getAuthor());
+        JTextField isbnTextField = new JTextField(entryItem.getIsbn());
+        JTextField dateBorrowedTextField = new JTextField(entryItem.getBorrower());
+        JTextField borrowerTextField = new JTextField(entryItem.getAffiliation());
+        JTextField affiliationTextField = new JTextField(entryItem.getDateBorrowed());
+        JTextField dueDateTextField = new JTextField(entryItem.getDueDate());
+
+        //Placeholder
         placeholder(bookTextField, "Enter Book Title");
         placeholder(isbnTextField, "Must have at least 10 digits");
         placeholder(authorTextField, "Last Name, First Name");
@@ -55,11 +65,10 @@ class AddEntryDialogGUI {
         placeholder(dateBorrowedTextField, "MM-DD-YYYY");
         placeholder(dueDateTextField, "MM-DD-YYYY");
 
-//        Title Container
-        JLabel title = new JLabel("Add New Entry", JLabel.LEFT);
+        //Title Container
+        JLabel title = new JLabel("Modify Entry", JLabel.LEFT);
         title.setFont(new Font("Inter", Font.BOLD, 30));
         title.setForeground(Color.WHITE);
-
         JPanel titleContainer = new JPanel();
         titleContainer.setLayout(new BorderLayout());
         titleContainer.setBackground(CADET_BLUE);
@@ -86,7 +95,6 @@ class AddEntryDialogGUI {
         right.add(panelFormat(borrowerCont, borrowedLabel, borrowerTextField));
         right.add(panelFormat(affiliationCont, affiliationLabel, affiliationTextField));
         right.add(panelFormat(dueDateCont, dueDateLabel, dueDateTextField));
-
 //        Button
         JPanel saveBtnContainer = new JPanel(new BorderLayout());
         saveBtnContainer.setBackground(Color.white);
@@ -118,33 +126,33 @@ class AddEntryDialogGUI {
         window.setLayout(new BorderLayout());
         window.add(titleContainer, BorderLayout.NORTH);
         window.add(innerCont, BorderLayout.CENTER);
-    }
 
-    private void saveButtonAction() {
-        var book = getText(bookTextField);
-        var author = getText(authorTextField);
-        var isbn = getText(isbnTextField);
-        var borrower = getText(borrowerTextField);
-        var affiliation = getText(affiliationTextField);
-        var dateBorrowed = getText(dateBorrowedTextField);
-        var dueDate = getText(dueDateTextField);
-
-        if (isUnfilled()) {
-            JOptionPane.showMessageDialog(window, "Fields can't be empty!", "Error", JOptionPane.ERROR_MESSAGE);
-        } else {
-            String id = book + "-" + borrower + "-" + dateBorrowed + "-" + dueDate;
-            var file = new CreateFile(PATH + File.separator, id);
-            var updateFile = new UpdateFile(file.getFile());
-            updateFile.writeln(book);
-            updateFile.writeln(author);
-            updateFile.writeln(isbn);
-            updateFile.writeln(borrower);
-            updateFile.writeln(affiliation);
-            updateFile.writeln(dateBorrowed);
-            updateFile.writeln(dueDate);
-            JOptionPane.showMessageDialog(window, "Entry Saved", "Notification", JOptionPane.PLAIN_MESSAGE);
-            window.dispose();
-        }
+        saveBtn.addActionListener(e -> {
+            if (bookTextField.getText().isEmpty() || authorTextField.getText().isEmpty() || isbnTextField.getText().isEmpty() ||
+                    dateBorrowedLabel.getText().isEmpty() || borrowerTextField.getText().isEmpty() || affiliationTextField.getText().isEmpty() ||
+                    dueDateTextField.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(window, "Fields can't be empty!", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                var updateFile = new UpdateFile(entryItem.getFile().getAbsoluteFile());
+                entryItem.setBook(getText(bookTextField));
+                entryItem.setAuthor(getText(authorTextField));
+                entryItem.setIsbn(getText(isbnTextField));
+                entryItem.setBorrower(getText(borrowerTextField));
+                entryItem.setAffiliation(getText(affiliationTextField));
+                entryItem.setDateBorrowed(getText(dateBorrowedTextField));
+                entryItem.setDueDate(getText(dueDateTextField));
+                updateFile.clear();
+                updateFile.writeln(entryItem.getBook());
+                updateFile.writeln(entryItem.getAuthor());
+                updateFile.writeln(entryItem.getIsbn());
+                updateFile.writeln(entryItem.getBorrower());
+                updateFile.writeln(entryItem.getAffiliation());
+                updateFile.writeln(entryItem.getDateBorrowed());
+                updateFile.writeln(entryItem.getDueDate());
+                JOptionPane.showMessageDialog(window, "Entry Saved", "Notification", JOptionPane.PLAIN_MESSAGE);
+                window.dispose();
+            }
+        });
     }
 
     public boolean isRunning() {
@@ -156,17 +164,6 @@ class AddEntryDialogGUI {
         tx.setForeground(Color.GRAY);
 //        tx.setForeground(Color.decode("#232323"));
         tx.setFont(new Font("Inter Medium", Font.PLAIN, 14));
-    }
-
-    private boolean isUnfilled() {
-        var bt = getText(bookTextField);
-        var ad = getText(authorTextField);
-        var is = getText(isbnTextField);
-        var bn = getText(borrowerTextField);
-        var af = getText(affiliationTextField);
-        var db = getText(dateBorrowedTextField);
-        var dd = getText(dueDateTextField);
-        return bt.isEmpty() || ad.isEmpty() || is.isEmpty() || bn.isEmpty() || af.isEmpty() || db.isEmpty() || dd.isEmpty();
     }
 
     private static JPanel panelFormat(JPanel panel, JLabel label, JTextField field) {
