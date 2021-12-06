@@ -6,8 +6,8 @@ import java.io.File;
 import java.nio.file.Path;
 
 class AddEntryDialog {
-    private final JDialog dialog;
-    private final JButton button = new JButton("Save");
+    private final JDialog addEntryDialog;
+    private final JButton saveBtn = new JButton("Save");
     private static final Color CADET_BLUE = Color.decode("#58A4B0");
     private final JTextField bookTf = new JTextField();
     private final JTextField authorTf = new JTextField();
@@ -22,18 +22,18 @@ class AddEntryDialog {
     private final Path PATH = Path.of(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Library Borrowing System" + File.separator + "Unreturned");
 
     public AddEntryDialog(JFrame parent) {
-        dialog = new JDialog();
-        dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        dialog.setModal(true);
-        dialog.setSize((int) (get_screen_width() / 2.7), (int) (get_screen_height() / 2.5));
-        dialog.setLocationRelativeTo(parent);
+        addEntryDialog = new JDialog();
+        addEntryDialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        addEntryDialog.setModal(true);
+        addEntryDialog.setSize((int) (get_screen_width() / 2.7), (int) (get_screen_height() / 2.5));
+        addEntryDialog.setLocationRelativeTo(parent);
         var icon = new ImageIcon("C:\\Users\\Lenovo\\IdeaProjects\\LMS\\src\\com\\lms\\gui\\icon.png").getImage();
-        dialog.setIconImage(icon);
+        addEntryDialog.setIconImage(icon);
         showUI();
-        button.addActionListener(e -> saveButtonAction());
-        datePicker1.addActionListener(ae -> dateBTf.setText(new DatePicker(dialog).getPickedDate()));
-        datePicker2.addActionListener(ae -> dueDTf.setText(new DatePicker(dialog).getPickedDate()));
-        dialog.setVisible(true);
+        saveBtn.addActionListener(e -> saveButtonAction());
+        datePicker1.addActionListener(ae -> dateBTf.setText(new DatePicker(addEntryDialog).getPickedDate()));
+        datePicker2.addActionListener(ae -> dueDTf.setText(new DatePicker(addEntryDialog).getPickedDate()));
+        addEntryDialog.setVisible(true);
     }
 
     public void showUI() {
@@ -97,10 +97,10 @@ class AddEntryDialog {
         var saveBtnContainer = new JPanel(new BorderLayout());
         saveBtnContainer.setBackground(Color.white);
         saveBtnContainer.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        button.setFont(new Font("Inter", Font.BOLD, 18));
-        button.setForeground(Color.white);
-        button.setBackground(CADET_BLUE);
-        saveBtnContainer.add(button, BorderLayout.CENTER);
+        saveBtn.setFont(new Font("Inter", Font.BOLD, 18));
+        saveBtn.setForeground(Color.white);
+        saveBtn.setBackground(CADET_BLUE);
+        saveBtnContainer.add(saveBtn, BorderLayout.CENTER);
         right.add(saveBtnContainer);
 
 //        Container for left and right container
@@ -111,10 +111,10 @@ class AddEntryDialog {
         innerCont.add(left);
         innerCont.add(right);
 
-        dialog.setTitle("Library Borrowing System | Add New Entry");
-        dialog.setResizable(false);
-        dialog.add(titleContainer, BorderLayout.NORTH);
-        dialog.add(innerCont, BorderLayout.CENTER);
+        addEntryDialog.setTitle("Library Borrowing System | Add New Entry");
+        addEntryDialog.setResizable(false);
+        addEntryDialog.add(titleContainer, BorderLayout.NORTH);
+        addEntryDialog.add(innerCont, BorderLayout.CENTER);
     }
 
     private void saveButtonAction() {
@@ -126,7 +126,7 @@ class AddEntryDialog {
         var dateBorrowed = getText(dateBTf);
         var dueDate = getText(dueDTf);
         if (isUnfilled()) {
-            JOptionPane.showMessageDialog(dialog, "Fields can't be empty!", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(addEntryDialog, "Fields can't be empty!", "Error", JOptionPane.ERROR_MESSAGE);
         } else {
             String id = book + "-" + borrower + "-" + dateBorrowed + "-" + dueDate;
             var file = new CreateFile(PATH + File.separator, id);
@@ -139,8 +139,8 @@ class AddEntryDialog {
             updateFile.writeln(dateBorrowed);
             updateFile.writeln(dueDate);
             updateFile.write("false");
-            JOptionPane.showMessageDialog(dialog, "Entry Saved", "Notification", JOptionPane.PLAIN_MESSAGE);
-            dialog.dispose();
+            JOptionPane.showMessageDialog(addEntryDialog, "Entry Saved", "Notification", JOptionPane.PLAIN_MESSAGE);
+            addEntryDialog.dispose();
         }
     }
 

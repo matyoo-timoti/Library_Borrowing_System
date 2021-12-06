@@ -64,6 +64,7 @@ public class MainWindow {
         sortOptions.setFont(new Font("Inter", Font.BOLD, 18));
         sortOptions.setEditable(false);
         sortOptions.setFocusable(false);
+        sortOptions.setFocusable(false);
         sortOptions.setBackground(Color.decode("#58A4B0"));
         sortOptions.setForeground(Color.WHITE);
         sortOptions.setToolTipText("Pick which category to show");

@@ -22,6 +22,7 @@ public class UpdateFile {
         try (FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
              BufferedWriter bw = new BufferedWriter(fw);
              PrintWriter out = new PrintWriter(bw)) {
+            out.close();
             out.print(text);
             System.out.println("Write operation complete.");
         } catch (IOException e) {
@@ -36,6 +37,7 @@ public class UpdateFile {
              BufferedWriter bw = new BufferedWriter(fw);
              PrintWriter out = new PrintWriter(bw)) {
             out.println(text);
+            out.close();
             System.out.println("Write line operation complete.");
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "An Error Occurred");
@@ -49,6 +51,7 @@ public class UpdateFile {
              BufferedWriter bw = new BufferedWriter(fw);
              PrintWriter out = new PrintWriter(bw)) {
             out.print("");
+            out.close();
             System.out.println("File content cleared.");
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "There are similar entry in the system.", "Error", JOptionPane.ERROR_MESSAGE);

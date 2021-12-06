@@ -40,7 +40,6 @@ public class DatePicker {
                     }
                 });
             }
-
             if (x < 7) {
                 button[x].setText(header[x]);
                 button[x].setForeground(Color.black);

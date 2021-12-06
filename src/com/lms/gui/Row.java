@@ -2,15 +2,10 @@ package com.lms.gui;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Image;
+import javax.swing.plaf.basic.BasicComboBoxUI;
+import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -28,77 +23,32 @@ public class Row {
     private final JPanel container = new JPanel();
     private final JButton editButton = new JButton();
     private final JButton delButton = new JButton();
-    private final JCheckBox checkBox = new JCheckBox("Returned");
+    private final JComboBox<Object> status = new JComboBox<>();
     private final String bookName;
 
     Row(File file) {
         entryItem = new EntryItem(file);
         bookName = entryItem.getBook();
-        checkBox.setSelected(entryItem.isReturned());
-        checkBox.setFocusable(false);
-        delButton.addActionListener(e -> remove());
-        var mod = new ModifyEntryGUI(entryItem);
-        editButton.addActionListener(e -> {
-            if (!mod.isRunning()) {
-                mod.showUI();
-            }
-            mod.focusable();
-        });
-        checkBox.addActionListener(e -> {
-            entryItem.setReturned(checkBox.isSelected());
-            moveToFolder();
-        });
-    }
+        status.setFocusable(false);
+        String[] stats = {"Unreturned", "Returned"};
+        status.addItem(stats[0]);
+        status.addItem(stats[1]);
 
-    private void moveToFolder() {
-//           Move file to the "Returned" folder if checkbox is checked.
-        var returnedPath = pathReturned + File.separator + entryItem.getFile().getName();
         if (entryItem.isReturned()) {
-            if (!Files.exists(Path.of(returnedPath))) {
-                try {
-                    File folder = new File(pathReturned.toString());
-                    if (folder.exists() || folder.mkdirs()) {
-                        Files.move(Path.of(entryItem.getFile().getAbsolutePath()), Path.of(pathReturned + File.separator + entryItem.getFile().getName()), StandardCopyOption.ATOMIC_MOVE);
-                    } else {
-                        JOptionPane.showMessageDialog(null, "ERROR: Folder does not exist.", "Error", JOptionPane.ERROR_MESSAGE);
-                        System.out.println("Folder Not created");
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        var unreturnedPath = pathUnreturned + File.separator + entryItem.getFile().getName();
-        if (!entryItem.isReturned()) {
-            if (!Files.exists(Path.of(unreturnedPath))) {
-                try {
-                    File folder = new File(pathUnreturned.toString());
-                    if (folder.exists() || folder.mkdirs()) {
-                        Files.move(Path.of(entryItem.getFile().getAbsolutePath()), Path.of(pathUnreturned + File.separator + entryItem.getFile().getName()), StandardCopyOption.ATOMIC_MOVE);
-                    } else {
-                        JOptionPane.showMessageDialog(null, "ERROR: Folder does not exist.", "Error", JOptionPane.ERROR_MESSAGE);
-                        System.out.println("Folder Not created");
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
+            status.setSelectedIndex(1);
+        } else status.setSelectedIndex(0);
 
-    private void remove() {
-//        Doesn't delete the file, instead moves it to another folder called 'Discarded'.
-        try {
-            File folder = new File(pathDiscarded.toString());
-            if (folder.exists() || folder.mkdirs()) {
-                Files.move(Path.of(entryItem.getFile().getAbsolutePath()), Path.of(pathDiscarded + File.separator + entryItem.getFile().getName()), StandardCopyOption.ATOMIC_MOVE);
-            } else {
-                JOptionPane.showMessageDialog(null, "ERROR: Folder does not exist.", "Error", JOptionPane.ERROR_MESSAGE);
-                System.out.println("Folder Not created");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        delButton.addActionListener(e -> remove());
+        editButton.addActionListener(e -> new ModifyEntryGUI(entryItem));
+
+        status.addItemListener(e -> {
+            entryItem.setReturned(status.getSelectedIndex() == 1);
+            statChangeAction();
+        });
+
+        UIManager.put("ToolTip.background", Color.white);
+        UIManager.put("ToolTip.foreground", Color.black);
+        UIManager.put("ToolTip.font", new Font("Inter", Font.PLAIN, 12));
     }
 
     public JPanel showGUI() {
@@ -136,9 +86,26 @@ public class Row {
         labelFormat(dueDateLabel);
         c4.add(dueDateLabel, new GridBagConstraints());
 
+        //        Status Combo Box
+        status.setFont(new Font("Inter", Font.BOLD, 18));
+        status.setForeground(Color.BLACK);
+        status.setEditable(false);
+        status.setFocusable(false);
+        status.setToolTipText("Click to set status");
+        status.setUI(new BasicComboBoxUI() {
+            @Override
+            protected JButton createArrowButton() {
+                return new JButton() {
+                    @Override
+                    public int getWidth() {
+                        return 0;
+                    }
+                };
+            }
+        });
         panelFormat(c5);
-        checkBox.setBackground(Color.white);
-        c5.add(checkBox, new GridBagConstraints());
+        status.setBackground(Color.white);
+        c5.add(status, new GridBagConstraints());
 
         panelFormat(c6);
         editButton.setBackground(Color.white);
@@ -165,6 +132,71 @@ public class Row {
         lineBottomPanel.setPreferredSize(new Dimension(700, 60));
         lineBottomPanel.setMaximumSize(new Dimension(2000, 70));
         return lineBottomPanel;
+    }
+
+    private void remove() {
+//        Doesn't delete the file, instead moves it to another folder called 'Discarded'.
+        try {
+            File folder = new File(pathDiscarded.toString());
+            if (folder.exists() || folder.mkdirs()) {
+                Files.move(Path.of(entryItem.getFile().getAbsolutePath()), Path.of(pathDiscarded + File.separator + entryItem.getFile().getName()), StandardCopyOption.ATOMIC_MOVE);
+            } else {
+                JOptionPane.showMessageDialog(null, "ERROR: Folder does not exist.", "Error", JOptionPane.ERROR_MESSAGE);
+                System.out.println("Folder Not created");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void statChangeAction() {
+//        Update file status before moving
+        var updateFile = new UpdateFile(entryItem.getFile().getAbsoluteFile());
+        updateFile.clear();
+        updateFile.writeln(entryItem.getBook());
+        updateFile.writeln(entryItem.getAuthor());
+        updateFile.writeln(entryItem.getIsbn());
+        updateFile.writeln(entryItem.getBorrower());
+        updateFile.writeln(entryItem.getAffiliation());
+        updateFile.writeln(entryItem.getDateBorrowed());
+        updateFile.writeln(entryItem.getDueDate());
+        updateFile.write(String.valueOf(entryItem.isReturned()));
+        System.out.println("Status Update Complete!");
+
+//           Move file to the "Returned" folder if checkbox is checked.
+        var returnedPath = pathReturned + File.separator + entryItem.getFile().getName();
+        if (entryItem.isReturned()) {
+            if (!Files.exists(Path.of(returnedPath))) {
+                try {
+                    File folder = new File(pathReturned.toString());
+                    if (folder.exists() || folder.mkdirs()) {
+                        Files.move(Path.of(entryItem.getFile().getAbsolutePath()), Path.of(pathReturned + File.separator + entryItem.getFile().getName()), StandardCopyOption.ATOMIC_MOVE);
+                        System.out.println("File moved!");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "ERROR: Folder does not exist.", "Error", JOptionPane.ERROR_MESSAGE);
+                        System.out.println("Folder Not created");
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        var unreturnedPath = pathUnreturned + File.separator + entryItem.getFile().getName();
+        if (!entryItem.isReturned()) {
+            if (!Files.exists(Path.of(unreturnedPath))) {
+                try {
+                    File folder = new File(pathUnreturned.toString());
+                    if (folder.exists() || folder.mkdirs()) {
+                        Files.move(Path.of(entryItem.getFile().getAbsolutePath()), Path.of(pathUnreturned + File.separator + entryItem.getFile().getName()), StandardCopyOption.ATOMIC_MOVE);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "ERROR: Folder does not exist.", "Error", JOptionPane.ERROR_MESSAGE);
+                        System.out.println("Folder Not created");
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     private static void labelFormat(Component label) {
