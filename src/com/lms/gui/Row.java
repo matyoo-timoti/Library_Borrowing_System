@@ -35,6 +35,7 @@ public class Row {
         entryItem = new EntryItem(file);
         bookName = entryItem.getBook();
         checkBox.setSelected(entryItem.isReturned());
+        checkBox.setFocusable(false);
         delButton.addActionListener(e -> remove());
         var mod = new ModifyEntryGUI(entryItem);
         editButton.addActionListener(e -> {

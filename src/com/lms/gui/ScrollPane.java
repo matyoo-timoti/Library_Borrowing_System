@@ -11,9 +11,12 @@ public class ScrollPane {
     private final JScrollPane scrollPane;
 
     ScrollPane() {
-        UIManager.put("ScrollBar.width", ((int) UIManager.get("ScrollBar.width") - 10));
         contRows.setLayout(new BoxLayout(contRows, BoxLayout.Y_AXIS));
         scrollPane = new JScrollPane(contRows);
+        int scrollBarWidth = 10;
+        scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(scrollBarWidth, 0));
+        scrollPane.getHorizontalScrollBar().setPreferredSize(new Dimension(scrollBarWidth, 0));
+//        UIManager.put("ScrollBar.width", ((int) UIManager.get("ScrollBar.width") - scrollBarSize));
         scrollPane.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.DARK_GRAY));
         customScrollBar(scrollPane);
     }
@@ -22,7 +25,7 @@ public class ScrollPane {
         contRows.add(component);
     }
 
-    public Component getScrollPane() {
+    public JScrollPane getScrollPane() {
         return scrollPane;
     }
 
@@ -36,7 +39,7 @@ public class ScrollPane {
     }
 
     private static void customScrollBar(JScrollPane scroll_pane) {
-        scroll_pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scroll_pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scroll_pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scroll_pane.getVerticalScrollBar().setUnitIncrement(10);//10 is default
         scroll_pane.getHorizontalScrollBar().setUnitIncrement(10);//10 is default

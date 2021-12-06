@@ -110,7 +110,7 @@ public class TextPrompt extends JLabel
     }
 
     /**
-     *  Set the prompt Show property to control when the promt is shown.
+     *  Set the prompt Show property to control when the prompt is shown.
      *  Valid values are:
      *
      *  Show.AWLAYS (default) - always show the prompt

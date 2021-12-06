@@ -16,15 +16,11 @@ public class MainWindow {
     private final JLabel title = new JLabel("Library Borrowing System");
     private final Path pathUnreturned = Path.of(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Library Borrowing System" + File.separator + "Unreturned");
     private final Path pathReturned = Path.of(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Library Borrowing System" + File.separator + "Returned");
+    Image icon = new ImageIcon("C:\\Users\\Lenovo\\IdeaProjects\\LMS\\src\\com\\lms\\gui\\icon.png").getImage();
 
     MainWindow() {
-        addNewButton.addActionListener(e -> {
-            var addNew = new AddEntryDialogGUI();
-            if (!addNew.isRunning()) {
-                addNew.showUI();
-            }
-            addNew.focusable();
-        });
+        mainWindow.setIconImage(icon);
+        addNewButton.addActionListener(ae -> new AddEntryDialog(mainWindow));
     }
 
     public static void main(String[] args) {
@@ -53,20 +49,24 @@ public class MainWindow {
         titleCont.add(title, BorderLayout.LINE_START);
         topCont.add(titleCont);
 
-//        Button look
+//       Add New Button look
+        addNewButton.setFocusable(false);
         addNewButton.setBackground(Color.decode("#58A4B0"));
         addNewButton.setForeground(Color.white);
         addNewButton.setFont(new Font("Inter", Font.BOLD, 18));
         addNewButton.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        var unreturned ="Unreturned";
+//        Sort Combo Box
+        var unreturned = "Unreturned";
         var returned = "Returned";
         String[] options = {unreturned, returned};
         var sortOptions = new JComboBox<>(options);
         sortOptions.setFont(new Font("Inter", Font.BOLD, 18));
         sortOptions.setEditable(false);
+        sortOptions.setFocusable(false);
         sortOptions.setBackground(Color.decode("#58A4B0"));
         sortOptions.setForeground(Color.WHITE);
+        sortOptions.setToolTipText("Pick which category to show");
 
 //        Container for the add and sort buttons
         middleCont.setLayout(new BoxLayout(middleCont, BoxLayout.Y_AXIS));
@@ -87,9 +87,10 @@ public class MainWindow {
         middleCont.add(botInsideMiddleCont);
         topCont.add(middleCont);
 
-        var returnedScrollPane = new ScrollPane();
-        createScrollPane(pathReturned, returnedScrollPane);
         var unreturnedScrollPane = new ScrollPane();
+        var returnedScrollPane = new ScrollPane();
+
+        createScrollPane(pathReturned, returnedScrollPane);
         createScrollPane(pathUnreturned, unreturnedScrollPane);
 
 //        Card Layout for changing panels
@@ -102,6 +103,7 @@ public class MainWindow {
             cl.show(card, (String) evt.getItem());
         });
 
+//        Keeps watch of the Returned and Unreturned folders for events and refreshes the content if there are.
         var t = new Thread(() -> {
             while (true) {
                 try {
@@ -140,7 +142,6 @@ public class MainWindow {
         mainWindow.setSize(900, 500);
         mainWindow.setVisible(true);
         mainWindow.setLocationRelativeTo(null);
-
     }
 
     private void createScrollPane(Path entryFolder, ScrollPane scrollPane) {
