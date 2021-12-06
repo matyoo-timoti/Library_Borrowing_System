@@ -7,8 +7,8 @@ import java.nio.file.Path;
 
 class AddEntryDialog {
     private final JDialog dialog;
-    private final JButton saveBtn = new JButton("Save");
-    private final Color CADET_BLUE = Color.decode("#58A4B0");
+    private final JButton button = new JButton("Save");
+    private static final Color CADET_BLUE = Color.decode("#58A4B0");
     private final JTextField bookTf = new JTextField();
     private final JTextField authorTf = new JTextField();
     private final JTextField isbnTf = new JTextField();
@@ -16,34 +16,41 @@ class AddEntryDialog {
     private final JTextField affiliationTf = new JTextField();
     private final JTextField dateBTf = new JTextField();
     private final JTextField dueDTf = new JTextField();
+    private final JButton datePicker1 = new JButton();
+    private final JButton datePicker2 = new JButton();
+
     private final Path PATH = Path.of(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Library Borrowing System" + File.separator + "Unreturned");
 
     public AddEntryDialog(JFrame parent) {
         dialog = new JDialog();
-        dialog.setModal(true);
         dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        dialog.setModal(true);
+        dialog.setSize((int) (get_screen_width() / 2.7), (int) (get_screen_height() / 2.5));
+        dialog.setLocationRelativeTo(parent);
         var icon = new ImageIcon("C:\\Users\\Lenovo\\IdeaProjects\\LMS\\src\\com\\lms\\gui\\icon.png").getImage();
         dialog.setIconImage(icon);
-        showUI(parent);
-        saveBtn.addActionListener(e -> saveButtonAction());
+        showUI();
+        button.addActionListener(e -> saveButtonAction());
+        datePicker1.addActionListener(ae -> dateBTf.setText(new DatePicker(dialog).getPickedDate()));
+        datePicker2.addActionListener(ae -> dueDTf.setText(new DatePicker(dialog).getPickedDate()));
         dialog.setVisible(true);
     }
 
-    public void showUI(JFrame parent) {
-        JLabel bookLabel = new JLabel("Title of the Book:");
-        JLabel authorLabel = new JLabel("Author:");
-        JLabel isbnLabel = new JLabel("ISBN");
-        JLabel dateBorrowedLabel = new JLabel("Date Borrowed:");
-        JLabel borrowedLabel = new JLabel("Borrower Name:");
-        JLabel affiliationLabel = new JLabel("Affiliation:");
-        JLabel dueDateLabel = new JLabel("Due Date:");
-        JPanel bookCont = new JPanel();
-        JPanel authorCont = new JPanel();
-        JPanel isbnCont = new JPanel();
-        JPanel dateBorrowedCont = new JPanel();
-        JPanel borrowerCont = new JPanel(new GridLayout(2, 1));
-        JPanel affiliationCont = new JPanel(new GridLayout(2, 1));
-        JPanel dueDateCont = new JPanel(new GridLayout(2, 1));
+    public void showUI() {
+        var bookLabel = new JLabel("Title of the Book:");
+        var authorLabel = new JLabel("Author:");
+        var isbnLabel = new JLabel("ISBN");
+        var dateBorrowedLabel = new JLabel("Date Borrowed:");
+        var borrowedLabel = new JLabel("Borrower Name:");
+        var affiliationLabel = new JLabel("Affiliation:");
+        var dueDateLabel = new JLabel("Due Date:");
+        var bookCont = new JPanel();
+        var authorCont = new JPanel();
+        var isbnCont = new JPanel();
+        var dateBorrowedCont = new JPanel();
+        var borrowerCont = new JPanel(new GridLayout(2, 1));
+        var affiliationCont = new JPanel(new GridLayout(2, 1));
+        var dueDateCont = new JPanel(new GridLayout(2, 1));
 
 //        Placeholder
         placeholder(bookTf, "Enter Book Title");
@@ -51,15 +58,15 @@ class AddEntryDialog {
         placeholder(authorTf, "Last Name, First Name");
         placeholder(borrowerTf, "Last Name, First Name");
         placeholder(affiliationTf, "Department/Course/Year/Block");
-        placeholder(dateBTf, "MM-dd-yyyy");
-        placeholder(dueDTf, "MM-dd-yyyy");
+        placeholder(dateBTf, "MM-DD-YYYY");
+        placeholder(dueDTf, "MM-DD-YYYY");
 
 //        Title Container
-        JLabel title = new JLabel("Add New Entry", JLabel.LEFT);
+        var title = new JLabel("Add New Entry", JLabel.LEFT);
         title.setFont(new Font("Inter", Font.BOLD, 30));
         title.setForeground(Color.WHITE);
 
-        JPanel titleContainer = new JPanel();
+        var titleContainer = new JPanel();
         titleContainer.setLayout(new BorderLayout());
         titleContainer.setBackground(CADET_BLUE);
         titleContainer.setSize(-1, 200);
@@ -67,7 +74,7 @@ class AddEntryDialog {
         titleContainer.add(title, BorderLayout.LINE_START);
 
 //        Left Side
-        JPanel left = new JPanel();
+        var left = new JPanel();
         left.setLayout(new GridLayout(4, 1));
         left.setBackground(Color.white);
         left.setSize(100, -1);
@@ -75,37 +82,35 @@ class AddEntryDialog {
         left.add(panelFormat(bookCont, bookLabel, bookTf));
         left.add(panelFormat(authorCont, authorLabel, authorTf));
         left.add(panelFormat(isbnCont, isbnLabel, isbnTf));
-        left.add(panelFormat(dateBorrowedCont, dateBorrowedLabel, dateBTf));
+        left.add(panelFormat(dateBorrowedCont, dateBorrowedLabel, dateBTf, datePicker1));
 
 //        Right Side
-        JPanel right = new JPanel(new GridLayout(4, 1));
+        var right = new JPanel(new GridLayout(4, 1));
         right.setBackground(Color.white);
         right.setSize(100, -1);
         right.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 20));
         right.add(panelFormat(borrowerCont, borrowedLabel, borrowerTf));
         right.add(panelFormat(affiliationCont, affiliationLabel, affiliationTf));
-        right.add(panelFormat(dueDateCont, dueDateLabel, dueDTf));
+        right.add(panelFormat(dueDateCont, dueDateLabel, dueDTf, datePicker2));
 
 //        Button
-        JPanel saveBtnContainer = new JPanel(new BorderLayout());
+        var saveBtnContainer = new JPanel(new BorderLayout());
         saveBtnContainer.setBackground(Color.white);
         saveBtnContainer.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        saveBtn.setFont(new Font("Inter", Font.BOLD, 18));
-        saveBtn.setForeground(Color.white);
-        saveBtn.setBackground(CADET_BLUE);
-        saveBtnContainer.add(saveBtn, BorderLayout.CENTER);
+        button.setFont(new Font("Inter", Font.BOLD, 18));
+        button.setForeground(Color.white);
+        button.setBackground(CADET_BLUE);
+        saveBtnContainer.add(button, BorderLayout.CENTER);
         right.add(saveBtnContainer);
 
 //        Container for left and right container
-        JPanel innerCont = new JPanel();
+        var innerCont = new JPanel();
         innerCont.setLayout(new GridLayout(0, 2));
         innerCont.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
         innerCont.setBackground(Color.white);
         innerCont.add(left);
         innerCont.add(right);
 
-        dialog.setSize((int) (get_screen_width() / 2.7), (int) (get_screen_height() / 2.5));
-        dialog.setLocationRelativeTo(parent);
         dialog.setTitle("Library Borrowing System | Add New Entry");
         dialog.setResizable(false);
         dialog.add(titleContainer, BorderLayout.NORTH);
@@ -140,7 +145,7 @@ class AddEntryDialog {
     }
 
     private static void placeholder(JTextField tf, String text) {
-        TextPrompt tx = new TextPrompt(text, tf);
+        var tx = new TextPrompt(text, tf);
         tx.setForeground(Color.GRAY);
         tx.setFont(new Font("Inter Medium", Font.PLAIN, 14));
     }
@@ -161,6 +166,28 @@ class AddEntryDialog {
         panel.setBackground(Color.white);
         panel.add(labelFormat(label));
         panel.add(textFieldFormat(field));
+        return panel;
+    }
+
+    private static JPanel panelFormat(JPanel panel, JLabel label, JTextField field, JButton button) {
+        panel.setLayout(new GridLayout(2, 1));
+        panel.setBackground(Color.white);
+        var tfBtnCont = new JPanel(new BorderLayout(5, 0));
+        tfBtnCont.setBackground(panel.getBackground());
+        tfBtnCont.add(textFieldFormat(field), BorderLayout.CENTER);
+        tfBtnCont.add(button, BorderLayout.LINE_END);
+        ImageIcon btnIco = new ImageIcon("C:\\Users\\Lenovo\\IdeaProjects\\LMS\\src\\com\\lms\\gui\\calendar_icon.png");
+        button.setIcon(btnIco);
+//        button.setFont(new Font("Inter", Font.BOLD, 14));
+        button.setBackground(CADET_BLUE);
+        button.setFocusable(false);
+        button.setPreferredSize(new Dimension(30, 0));
+        button.setToolTipText("Date Picker");
+        UIManager.put("ToolTip.background", Color.white);
+        UIManager.put("ToolTip.foreground", Color.black);
+        UIManager.put("ToolTip.font", new Font("Inter", Font.PLAIN, 12));
+        panel.add(labelFormat(label));
+        panel.add(tfBtnCont);
         return panel;
     }
 
