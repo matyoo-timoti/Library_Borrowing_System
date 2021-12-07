@@ -138,7 +138,6 @@ class AddEntryDialog {
             updateFile.writeln(affiliation);
             updateFile.writeln(dateBorrowed);
             updateFile.writeln(dueDate);
-            updateFile.write("false");
             JOptionPane.showMessageDialog(addEntryDialog, "Entry Saved", "Notification", JOptionPane.PLAIN_MESSAGE);
             addEntryDialog.dispose();
         }

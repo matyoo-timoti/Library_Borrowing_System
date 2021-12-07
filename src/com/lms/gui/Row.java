@@ -21,32 +21,59 @@ public class Row {
     private final JPanel container = new JPanel();
     private final JButton editButton = new JButton();
     private final JButton delButton = new JButton();
-    private final JComboBox<Object> status = new JComboBox<>();
+    private final JComboBox<String> status;
     private final String bookName;
 
     Row(File file) {
         entryItem = new EntryItem(file);
         bookName = entryItem.getBook();
-        status.setFocusable(false);
+
+        /*If the file is stored in the returned folder
+         * sets the entry as returned, otherwise unreturned. */
+        var unreturnedPath = pathUnreturned + File.separator + entryItem.getFile().getName();
+        entryItem.setReturned(!Files.exists(Path.of(unreturnedPath)));
+
         String[] stats = {"Unreturned", "Returned"};
-        status.addItem(stats[0]);
-        status.addItem(stats[1]);
+        status = new JComboBox<>(stats);
+        status.setFocusable(false);
 
         if (entryItem.isReturned()) {
             status.setSelectedIndex(1);
         } else status.setSelectedIndex(0);
 
-        delButton.addActionListener(e -> remove());
+        delButton.addActionListener(e -> showDelDialog());
+
         editButton.addActionListener(e -> new ModifyEntryGUI(entryItem));
 
-        status.addItemListener(e -> {
-            entryItem.setReturned(status.getSelectedIndex() == 1);
+        status.addActionListener(e -> {
+            entryItem.setReturned((status.getSelectedIndex() == 1));
             statChangeAction();
         });
 
         UIManager.put("ToolTip.background", Color.white);
         UIManager.put("ToolTip.foreground", Color.black);
         UIManager.put("ToolTip.font", new Font("Inter", Font.PLAIN, 12));
+    }
+
+    private void showDelDialog() {
+        var msg = "<html>" + "Are you sure to remove this Entry?" + "<br>" +
+                "Book Title   :" + entryItem.getBook() + "<br>" +
+                "Author       : " + entryItem.getAuthor() + "<br>" +
+                "Borrower     : " + entryItem.getBorrower() + "<br>" +
+                "Affiliation  : " + entryItem.getAffiliation() + "<br>" +
+                "Date Borrowed: " + entryItem.getDateBorrowed() + "<br>" +
+                "Due Date     : " + entryItem.getDueDate() + "<br>"
+                + "</html>";
+
+        var delLabel = new JLabel("Entry removed successfully!");
+        delLabel.setFont(new Font("Inter", Font.BOLD, 13));
+        var msgLabel = new JLabel(msg);
+        msgLabel.setFont(new Font("Inter", Font.PLAIN, 15));
+        int reply = JOptionPane.showConfirmDialog(null, msgLabel, "Confirm", JOptionPane.YES_NO_OPTION);
+        if (reply == JOptionPane.YES_OPTION) {
+            JOptionPane.showMessageDialog(null, delLabel, "Delete Successful", JOptionPane.PLAIN_MESSAGE);
+                remove();
+        }
     }
 
     public JPanel showGUI() {
@@ -84,7 +111,8 @@ public class Row {
         labelFormat(dueDateLabel);
         c4.add(dueDateLabel, new GridBagConstraints());
 
-        //        Status Combo Box
+        //ComboBox for status of entry
+        //Remove borders of comboBox
         status.setFont(new Font("Inter", Font.BOLD, 18));
         status.setForeground(Color.BLACK);
         status.setEditable(false);
@@ -101,6 +129,7 @@ public class Row {
                 };
             }
         });
+
         panelFormat(c5);
         status.setBackground(Color.white);
         c5.add(status, new GridBagConstraints());
@@ -112,7 +141,7 @@ public class Row {
         buttonFormat(delButton, delIco);
         iconResize(edIco, 40);
         c6.add(editButton, new GridBagConstraints());
-        c6.add(createRigidArea(new Dimension(25, 0)));
+        c6.add(createRigidArea(new Dimension(20, 0)));
         c6.add(delButton, new GridBagConstraints());
 
         var lineBottomPanel = new JPanel(new GridLayout(1, 1));
@@ -148,19 +177,6 @@ public class Row {
     }
 
     private void statChangeAction() {
-//        Update file status before moving
-        var updateFile = new UpdateFile(entryItem.getFile().getAbsoluteFile());
-        updateFile.clear();
-        updateFile.writeln(entryItem.getBook());
-        updateFile.writeln(entryItem.getAuthor());
-        updateFile.writeln(entryItem.getIsbn());
-        updateFile.writeln(entryItem.getBorrower());
-        updateFile.writeln(entryItem.getAffiliation());
-        updateFile.writeln(entryItem.getDateBorrowed());
-        updateFile.writeln(entryItem.getDueDate());
-        updateFile.write(String.valueOf(entryItem.isReturned()));
-        System.out.println("Status Update Complete!");
-
 //           Move file to the "Returned" folder if checkbox is checked.
         var returnedPath = pathReturned + File.separator + entryItem.getFile().getName();
         if (entryItem.isReturned()) {
@@ -170,6 +186,7 @@ public class Row {
                     if (folder.exists() || folder.mkdirs()) {
                         Files.move(Path.of(entryItem.getFile().getAbsolutePath()), Path.of(pathReturned + File.separator + entryItem.getFile().getName()), StandardCopyOption.ATOMIC_MOVE);
                         System.out.println("File moved!");
+                        return;
                     } else {
                         JOptionPane.showMessageDialog(null, "ERROR: Folder does not exist.", "Error", JOptionPane.ERROR_MESSAGE);
                         System.out.println("Folder Not created");
@@ -186,6 +203,7 @@ public class Row {
                     File folder = new File(pathUnreturned.toString());
                     if (folder.exists() || folder.mkdirs()) {
                         Files.move(Path.of(entryItem.getFile().getAbsolutePath()), Path.of(pathUnreturned + File.separator + entryItem.getFile().getName()), StandardCopyOption.ATOMIC_MOVE);
+                        System.out.println("File moved!");
                     } else {
                         JOptionPane.showMessageDialog(null, "ERROR: Folder does not exist.", "Error", JOptionPane.ERROR_MESSAGE);
                         System.out.println("Folder Not created");
@@ -229,4 +247,5 @@ public class Row {
     public String getBookName() {
         return bookName;
     }
+
 }

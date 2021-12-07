@@ -24,7 +24,7 @@ public class EntryItem{
         setAffiliation(read.readLine());
         setDateBorrowed(read.readLine());
         setDueDate(read.readLine());
-        setReturned(Boolean.parseBoolean(read.readLine()));
+        setReturned(false);
         try {
             read.bufferedReader.close();
         } catch (IOException e) {
