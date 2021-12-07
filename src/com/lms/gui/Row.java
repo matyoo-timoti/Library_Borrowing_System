@@ -69,7 +69,7 @@ public class Row {
         delLabel.setFont(new Font("Inter", Font.BOLD, 13));
         var msgLabel = new JLabel(msg);
         msgLabel.setFont(new Font("Inter", Font.PLAIN, 15));
-        int reply = JOptionPane.showConfirmDialog(null, msgLabel, "Confirm", JOptionPane.YES_NO_OPTION);
+        int reply = JOptionPane.showConfirmDialog(null, msgLabel, "Delete Confirmation", JOptionPane.YES_NO_OPTION);
         if (reply == JOptionPane.YES_OPTION) {
             JOptionPane.showMessageDialog(null, delLabel, "Delete Successful", JOptionPane.PLAIN_MESSAGE);
                 remove();
