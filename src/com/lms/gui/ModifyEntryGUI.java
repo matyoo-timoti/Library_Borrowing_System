@@ -2,6 +2,7 @@ package com.lms.gui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Objects;
 
 public class ModifyEntryGUI {
     private final JDialog modEntryDialog;
@@ -24,7 +25,7 @@ public class ModifyEntryGUI {
         modEntryDialog.setModal(true);
         modEntryDialog.setSize((int) (get_screen_width() / 2.7), (int) (get_screen_height() / 2.5));
         modEntryDialog.setLocationRelativeTo(null);
-        var icon = new ImageIcon("C:\\Users\\Lenovo\\IdeaProjects\\LMS\\src\\com\\lms\\gui\\icon.png").getImage();
+        Image icon = new ImageIcon(Objects.requireNonNull(this.getClass().getResource("icons/icon.png"))).getImage();
         modEntryDialog.setIconImage(icon);
 
         entryItem = entry;
@@ -158,16 +159,15 @@ public class ModifyEntryGUI {
                 dueDTf.getText().isEmpty());
     }
 
-    private static JPanel panelFormat(JPanel panel, JLabel label, JTextField field, JButton button) {
+    private JPanel panelFormat(JPanel panel, JLabel label, JTextField field, JButton button) {
         panel.setLayout(new GridLayout(2, 1));
         panel.setBackground(Color.white);
         var tfBtnCont = new JPanel(new BorderLayout(5, 0));
         tfBtnCont.setBackground(panel.getBackground());
         tfBtnCont.add(textFieldFormat(field), BorderLayout.CENTER);
         tfBtnCont.add(button, BorderLayout.LINE_END);
-        ImageIcon btnIco = new ImageIcon("C:\\Users\\Lenovo\\IdeaProjects\\LMS\\src\\com\\lms\\gui\\calendar_icon.png");
-        button.setIcon(btnIco);
-//        button.setFont(new Font("Inter", Font.BOLD, 14));
+        var btnIcon = new ImageIcon(Objects.requireNonNull(this.getClass().getResource("icons/calendar_icon.png")));
+        button.setIcon(btnIcon);
         button.setBackground(CADET_BLUE);
         button.setFocusable(false);
         button.setPreferredSize(new Dimension(30, 0));

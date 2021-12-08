@@ -10,11 +10,7 @@ import java.io.PrintWriter;
 public class UpdateFile {
     private final File file;
 
-    public UpdateFile(String filePath) {
-        file = new File(filePath);
-    }
-
-    public UpdateFile (File file) {
+    public UpdateFile(File file) {
         this.file = file;
     }
 

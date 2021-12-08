@@ -9,14 +9,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.Objects;
 
 import static javax.swing.Box.createRigidArea;
 
 public class Row {
-    private final String iconDirectory = System.getProperty("user.dir") + File.separator + "icons";
-    private static final Path pathDiscarded = Path.of(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Library Borrowing System" + File.separator + "Discarded");
-    private static final Path pathReturned = Path.of(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Library Borrowing System" + File.separator + "Returned");
-    private static final Path pathUnreturned = Path.of(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Library Borrowing System" + File.separator + "Unreturned");
+    private static final Path LBS = Path.of(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Library Borrowing System");
+    private static final Path pathDiscarded = Path.of(LBS + File.separator + "Discarded");
+    private static final Path pathReturned = Path.of(LBS+ File.separator + "Returned");
+    private static final Path pathUnreturned = Path.of(LBS + File.separator + "Unreturned");
     private final EntryItem entryItem;
     private final JPanel container = new JPanel();
     private final JButton editButton = new JButton();
@@ -28,8 +29,6 @@ public class Row {
         entryItem = new EntryItem(file);
         bookName = entryItem.getBook();
 
-        /*If the file is stored in the returned folder
-         * sets the entry as returned, otherwise unreturned. */
         var unreturnedPath = pathUnreturned + File.separator + entryItem.getFile().getName();
         entryItem.setReturned(!Files.exists(Path.of(unreturnedPath)));
 
@@ -42,14 +41,11 @@ public class Row {
         } else status.setSelectedIndex(0);
 
         delButton.addActionListener(e -> showDelDialog());
-
         editButton.addActionListener(e -> new ModifyEntryGUI(entryItem));
-
         status.addActionListener(e -> {
             entryItem.setReturned((status.getSelectedIndex() == 1));
             statChangeAction();
         });
-
         UIManager.put("ToolTip.background", Color.white);
         UIManager.put("ToolTip.foreground", Color.black);
         UIManager.put("ToolTip.font", new Font("Inter", Font.PLAIN, 12));
@@ -71,8 +67,8 @@ public class Row {
         msgLabel.setFont(new Font("Inter", Font.PLAIN, 15));
         int reply = JOptionPane.showConfirmDialog(null, msgLabel, "Delete Confirmation", JOptionPane.YES_NO_OPTION);
         if (reply == JOptionPane.YES_OPTION) {
+            remove();
             JOptionPane.showMessageDialog(null, delLabel, "Delete Successful", JOptionPane.PLAIN_MESSAGE);
-                remove();
         }
     }
 
@@ -90,8 +86,6 @@ public class Row {
         JPanel c4 = new JPanel(new GridBagLayout());
         JPanel c5 = new JPanel(new GridBagLayout());
         JPanel c6 = new JPanel(new GridBagLayout());
-        ImageIcon edIco = new ImageIcon(iconDirectory + File.separator + "edit_icon.png");
-        ImageIcon delIco = new ImageIcon(iconDirectory + File.separator + "delete_icon1.png");
 
         panelFormat(c1);
         labelFormat(bookNameLabel, authorLabel);
@@ -137,9 +131,13 @@ public class Row {
         panelFormat(c6);
         editButton.setBackground(Color.white);
         delButton.setBackground(Color.white);
-        buttonFormat(editButton, edIco);
-        buttonFormat(delButton, delIco);
-        iconResize(edIco, 40);
+        var edIcon = new ImageIcon(Objects.requireNonNull(this.getClass().getResource("icons/edit_icon.png")));
+        var delIcon = new ImageIcon(Objects.requireNonNull(this.getClass().getResource("icons/delete_icon1.png")));
+        editButton.setBorder(BorderFactory.createEmptyBorder());
+        editButton.setContentAreaFilled(false);
+        buttonFormat(editButton, edIcon);
+        buttonFormat(delButton, delIcon);
+        iconResize(edIcon, 40);
         c6.add(editButton, new GridBagConstraints());
         c6.add(createRigidArea(new Dimension(20, 0)));
         c6.add(delButton, new GridBagConstraints());
@@ -167,6 +165,7 @@ public class Row {
             File folder = new File(pathDiscarded.toString());
             if (folder.exists() || folder.mkdirs()) {
                 Files.move(Path.of(entryItem.getFile().getAbsolutePath()), Path.of(pathDiscarded + File.separator + entryItem.getFile().getName()), StandardCopyOption.ATOMIC_MOVE);
+                System.out.println("File moved to discarded folder!");
             } else {
                 JOptionPane.showMessageDialog(null, "ERROR: Folder does not exist.", "Error", JOptionPane.ERROR_MESSAGE);
                 System.out.println("Folder Not created");
@@ -185,7 +184,7 @@ public class Row {
                     File folder = new File(pathReturned.toString());
                     if (folder.exists() || folder.mkdirs()) {
                         Files.move(Path.of(entryItem.getFile().getAbsolutePath()), Path.of(pathReturned + File.separator + entryItem.getFile().getName()), StandardCopyOption.ATOMIC_MOVE);
-                        System.out.println("File moved!");
+                        System.out.println("File moved to returned folder!");
                         return;
                     } else {
                         JOptionPane.showMessageDialog(null, "ERROR: Folder does not exist.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -203,7 +202,7 @@ public class Row {
                     File folder = new File(pathUnreturned.toString());
                     if (folder.exists() || folder.mkdirs()) {
                         Files.move(Path.of(entryItem.getFile().getAbsolutePath()), Path.of(pathUnreturned + File.separator + entryItem.getFile().getName()), StandardCopyOption.ATOMIC_MOVE);
-                        System.out.println("File moved!");
+                        System.out.println("File moved to the unreturned folder!");
                     } else {
                         JOptionPane.showMessageDialog(null, "ERROR: Folder does not exist.", "Error", JOptionPane.ERROR_MESSAGE);
                         System.out.println("Folder Not created");

@@ -9,14 +9,14 @@ import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 public class MainWindow {
     private final JFrame mainWindow = new JFrame("Library Borrowing System | By: Matthew Cabarle");
     private final JButton addNewButton = new JButton("Add New Entry");
     private final JLabel title = new JLabel("Library Borrowing System");
-    private final Path pathUnreturned = Path.of(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Library Borrowing System" + File.separator + "Unreturned");
-    private final Path pathReturned = Path.of(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Library Borrowing System" + File.separator + "Returned");
-    Image icon = new ImageIcon("C:\\Users\\Lenovo\\IdeaProjects\\LMS\\src\\com\\lms\\gui\\icon.png").getImage();
+    private final Path LBS = Path.of(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Library Borrowing System");
+    Image icon = new ImageIcon(Objects.requireNonNull(this.getClass().getResource("icons/icon.png"))).getImage();
 
     MainWindow() {
         mainWindow.setIconImage(icon);
@@ -29,6 +29,8 @@ public class MainWindow {
     }
 
     public void showUI() {
+        Path pathUnreturned = Path.of(LBS + File.separator + "Unreturned");
+        Path pathReturned = Path.of(LBS + File.separator + "Returned");
         JPanel topCont = new JPanel();
         JPanel titleCont = new JPanel(new BorderLayout());
         JPanel middleCont = new JPanel();
@@ -90,9 +92,8 @@ public class MainWindow {
 
         var unreturnedScrollPane = new ScrollPane();
         var returnedScrollPane = new ScrollPane();
-
-        createScrollPane(pathReturned, returnedScrollPane);
         createScrollPane(pathUnreturned, unreturnedScrollPane);
+        createScrollPane(pathReturned, returnedScrollPane);
 
 //        Card Layout for changing panels
         var card = new JPanel(new CardLayout());
